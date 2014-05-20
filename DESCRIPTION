@@ -1,0 +1,18 @@
+Package: npcp
+Type: Package
+Title: Some nonparametric tests for change-point detection in
+        (multivariate) observations
+Version: 0.0-1
+Date: 2014-20-05
+Author: Ivan Kojadinovic
+Maintainer: Ivan Kojadinovic <ivan.kojadinovic@univ-pau.fr>
+Depends: numDeriv
+Suggests: copula
+Description: Provides nonparametric tests for assessing whether possibly serially dependent (multivariate) continuous observations have the same c.d.f. or not. In addition to tests focusing directly on the (multivariate) c.d.f., the package contains tests designed to be particularly sensitive to changes in the underlying copula.
+License: GPL (>= 3) | file LICENCE
+LazyLoad: yes
+Encoding: UTF-8
+Packaged: 2014-05-07 15:19:03 UTC; ikojadin
+NeedsCompilation: yes
+Repository: CRAN
+Date/Publication: 2014-05-07 19:26:48

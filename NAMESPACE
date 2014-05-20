@@ -1,0 +1,6 @@
+useDynLib(npcp)
+importFrom("numDeriv", hessian)
+export(cpTestFn)
+export(cpTestCn)
+export(b.opt)
+
