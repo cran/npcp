@@ -20,34 +20,19 @@
 #################################################################################
 
 #################################################################################
-## Functions necessary for generating dependent multipliers
-#################################################################################
-
-bartlettweights <- function(b)
-{
-    (1 - abs(-(b-1):(b-1))/b)/b * sqrt(3*b^3/(2*b^2+1))
-}
-
-parzenweights <- function(b)
-{
-    w <- parzen(-(b-1):(b-1)/b)
-    w / sqrt(sum(w^2)) ## variance correction
-}
-
-#################################################################################
 ## Some change-point tests based on the empirical cdfs
 #################################################################################
 
 cpTestFn <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
-                     mult.method = c("nonseq", "seq"), b = 1,
+                     method = c("nonseq", "seq"), b = 1,
                      weights = c("parzen", "bartlett"),
-                     m = 5, combine.method=c("max","median","mean","min"),
+                     m = 5, L.method=c("max","median","mean","min"),
                      N = 1000, init.seq = NULL)
 {
     statistic <- match.arg(statistic)
-    mult.method <- match.arg(mult.method)
+    method <- match.arg(method)
     weights <- match.arg(weights)
-    combine.method <- match.arg(combine.method)
+    L.method <- match.arg(L.method)
 
     stopifnot(is.matrix(x))
     d <- ncol(x)
@@ -55,12 +40,9 @@ cpTestFn <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
     npb <- n - 1 # number of possible breakpoints
 
     if (is.null(b))
-        b <- b.opt(x, m=m, weights=weights,
-                   combine.method=combine.method)
+        b <- bOptEmpProc(x, m=m, weights=weights,
+                         L.method=L.method)
     stopifnot(b >= 1)
-    w <- switch(weights,
-                bartlett = bartlettweights(b),
-                parzen = parzenweights(b))
 
     ## initial standard normal sequence for generating dependent multipliers
     if (is.null(init.seq))
@@ -76,9 +58,9 @@ cpTestFn <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
               cvm = double(npb),
               ks = double(npb),
               as.integer(N),
-              as.double(w),
+              as.integer(weights == "bartlett"),
               as.integer(b),
-              as.integer(mult.method == "seq"),
+              as.integer(method == "seq"),
               cvm0 = double(N * npb),
               ks0 = double(N * npb),
               as.double(init.seq),
@@ -103,7 +85,7 @@ cpTestFn <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
                   ksmean = pval(sum,ks0,ks))
 
     structure(class = "htest",
-              list(method = sprintf("Test for change-point detection based on the multivariate empirical c.d.f. with 'mult.method'=\"%s\"", mult.method),
+              list(method = sprintf("Test for change-point detection based on the multivariate empirical c.d.f. with 'method'=\"%s\"", method),
                    statistic = statistics[statistic],
                    p.value =  p.values[statistic],
                    cvm = c(cvm=cvm), ks = c(ks=ks),
@@ -117,27 +99,25 @@ cpTestFn <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
 ## Change-point tests based on the empirical copula
 #################################################################################
 
-cpTestCn <- function(x, mult.method = c("seq", "nonseq"), b = 1,
+cpTestCn <- function(x, method = c("seq", "nonseq"), b = 1,
                      weights = c("parzen", "bartlett"), m = 5,
-                     combine.method=c("max","median","mean","min"),
+                     L.method=c("max","median","mean","min"),
                      N = 1000, init.seq = NULL)
 {
-    mult.method <- match.arg(mult.method)
+    method <- match.arg(method)
     weights <- match.arg(weights)
-    combine.method <- match.arg(combine.method)
+    L.method <- match.arg(L.method)
 
     stopifnot(is.matrix(x))
     d <- ncol(x)
+    stopifnot(d > 1)
     n <- nrow(x)
     npb <- n - 1 # number of possible breakpoints
 
     if (is.null(b))
-        b <- b.opt(x, m=m, weights=weights,
-                   combine.method=combine.method)
+        b <- bOptEmpProc(x, m=m, weights=weights,
+                         L.method=L.method)
     stopifnot(b >= 1)
-    w <- switch(weights,
-                bartlett = bartlettweights(b),
-                parzen = parzenweights(b))
 
     ## initial standard normal sequence for generating dependent multipliers
     if (is.null(init.seq))
@@ -152,21 +132,163 @@ cpTestCn <- function(x, mult.method = c("seq", "nonseq"), b = 1,
               as.integer(d),
               cvm = double(npb),
               as.integer(N),
-              as.double(w),
+              as.integer(weights == "bartlett"),
               as.integer(b),
-              as.integer(mult.method == "seq"),
+              as.integer(method == "seq"),
               cvm0 = double(N * npb),
               as.double(init.seq),
               PACKAGE = "npcp")
 
     cvm <- out$cvm
     cvm0 <- matrix(out$cvm0,N,npb)
-    statistic <- max(cvm)
+    statistic <- c(cvmmax=max(cvm))
 
     structure(class = "htest",
-              list(method = sprintf("Test for change-point detection based on the empirical copula with 'mult.method'=\"%s\"", mult.method),
+              list(method = sprintf("Test for change-point detection based on the empirical copula with 'method'=\"%s\"", method),
                    statistic = statistic,
                    p.value =  ( sum( apply(cvm0,1,max) >= statistic ) + 0.5 ) / (N + 1),
                    cvm = c(cvm=cvm), b = c(b=b),
                    data.name = deparse(substitute(x))))
 }
+
+#################################################################################
+## Change-point tests based on multivariate extensions of Spearman's rho
+#################################################################################
+
+cpTestRho <- function(x, method = c("mult", "asym.var"),
+                      ## method = c("seq", "nonseq", "asym.var"),
+                      statistic = c("pairwise", "global"),
+                      ## L.method = c("pseudo","max","median","mean","min"),
+                      b = 1, weights = c("parzen", "bartlett"),
+                      N = 1000, init.seq = NULL)
+{
+
+
+    method <- match.arg(method)
+    statistic <- match.arg(statistic)
+    weights <- match.arg(weights)
+    ## L.method <- match.arg(L.method)
+    L.method <- "pseudo"
+
+    stopifnot(is.matrix(x))
+    d <- ncol(x)
+    stopifnot(d > 1)
+    n <- nrow(x)
+    npb <- n - 1 # number of possible breakpoints
+
+    if (is.null(b))
+    {
+        res <- bOptRho(x, statistic=statistic, weights=weights, L.method=L.method)
+        b <- res$b
+        influ <- res$influnonseq
+        fbin <- res$fbin
+        influest <- TRUE
+    }
+    else
+    {
+        ## f in natural order
+        f <- switch(statistic,
+                    global = c(rep(0,2^d - 1),1),
+                    pairwise = c(rep(0, d + 1), rep(1, choose(d,2)),
+                    rep(0, 2^d - choose(d,2) - d - 1)))
+
+        ## convert f into binary order
+        powerset <-  .C("k_power_set",
+                        as.integer(d),
+                        as.integer(d),
+                        powerset = integer(2^d),
+                        PACKAGE="npcp")$powerset
+
+        fbin <- .C("natural2binary",
+                   as.integer(d),
+                   as.double(f),
+                   as.integer(powerset),
+                   fbin = double(2^d),
+                   PACKAGE="npcp")$fbin
+
+        influ <- double(n)
+        influest <- FALSE
+    }
+    stopifnot(b >= 1)
+
+    m <- switch(method,
+                "mult" = 1, ##"seq" = 1,
+                ## "nonseq" = 2,
+                "asym.var" = 3)
+
+    ## if (method %in% c("seq", "nonseq"))
+    if (method == "mult")
+    {
+        ## initial standard normal sequence for generating dependent multipliers
+        if (is.null(init.seq))
+            init.seq <- rnorm(N * (n + 2 * (b - 1)))
+        else
+            stopifnot(length(init.seq) == N * (n + 2 * (b - 1)))
+    }
+
+    ## test
+    out <- .C("cpTestRho",
+              as.double(x),
+              as.integer(n),
+              as.integer(d),
+              rho = double(npb),
+              as.double(fbin),
+              influ = as.double(influ),
+              as.integer(influest),
+              as.integer(N),
+              as.integer(weights == "bartlett"),
+              as.integer(b),
+              as.integer(m),
+              rho0 = double(N * npb),
+              avar = double(1),
+              as.double(init.seq),
+              PACKAGE = "npcp")
+
+    rho <- out$rho
+    stat <- max(rho)
+
+    ## if (method %in% c("seq", "nonseq"))
+    if (method == "mult")
+    {
+        rho0 <- matrix(out$rho0,N,npb)
+        p.value <- ( sum( apply(rho0,1,max) >= stat ) + 0.5 ) / (N + 1)
+    }
+    else
+    {
+        if (!(out$avar > .Machine$double.eps)) ## OK?
+        {
+            cat("b =",b,"\n")
+            cat("influ",out$influ,"\n")
+            stop("The asymptotic variance is numerically equal to zero.")
+        }
+        else
+        {
+            ## related to the cdf of the KS statistic
+            ## from the source of ks.test -- credit to Rcore
+            pkolmogorov1x <- function(x, n) {
+                if (x <= 0)
+                    return(0)
+                if (x >= 1)
+                    return(1)
+                j <- seq.int(from = 0, to = floor(n * (1 -
+                                       x)))
+                1 - x * sum(exp(lchoose(n, j) +
+                                (n - j) * log(1 - x - j/n) + (j - 1) *
+                                log(x + j/n)))
+            }
+            #if (n <= 100)
+            p.value <- 2 * (1 - pkolmogorov1x(stat / sqrt(out$avar), n))
+            #else
+            #p.value <- 2 * exp(-2 * n * stat^2 / out$avar)
+            p.value <- min(1, max(0, p.value)) ## guard as in ks.test
+        }
+    }
+
+    structure(class = "htest",
+              list(method = sprintf("Test for change-point detection based on multivariate extensions of Spearman's rho with 'statistic'=\"%s\" and 'method'=\"%s\"", statistic, method),
+                   statistic = c(rhomax=stat),
+                   p.value = p.value,
+                   rho = c(rho=rho), b = c(b=b),
+                   data.name = deparse(substitute(x))))
+}
+

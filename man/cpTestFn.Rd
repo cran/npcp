@@ -8,14 +8,14 @@
   univariate or
   multivariate, and serially independent or dependent (strongly mixing).
   Approximate p-values for the test statistics are obtained by means of a
-  \emph{multiplier} approach. Details can be found in first reference
+  \emph{multiplier} approach. Details can be found in the first reference
   which treats the serially independent case.
 }
 \usage{
 cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
-         mult.method = c("nonseq", "seq"), b = 1,
+         method = c("nonseq", "seq"), b = 1,
          weights = c("parzen", "bartlett"),
-         m = 5, combine.method=c("max","median","mean","min"),
+         m = 5, L.method=c("max","median","mean","min"),
          N = 1000, init.seq = NULL)
 }
 \arguments{
@@ -28,7 +28,7 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
     \code{nrow(x)-1} intermediate Kolmogorov-Smirnov statistics); see
     Section 3 in the first reference. The four statistics and the
     corresponding p-values are computed at each execution.}
-  \item{mult.method}{a string specifying the simulation method for
+  \item{method}{a string specifying the simulation method for
     generating multiplier replicates of the test statistic;
     can be either \code{"nonseq"} (the 'check' approach
     in the first reference) or \code{"seq"} (the 'hat' approach
@@ -41,7 +41,7 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
     value is 1, which will create i.i.d. multiplier
     sequences suitable for serially independent observations. If set to
     \code{NULL}, \code{b} will be estimated from \code{x} using the
-    function \code{\link{b.opt}()}; see the procedure described in
+    function \code{\link{bOptEmpProc}()}; see the procedure described in
     Section 5 of the second reference.}
  \item{weights}{a string specifying the kernel for creating the
    weights used in the generation of dependent multiplier sequences within the
@@ -52,7 +52,7 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
    parameter; see Section 5 of the third reference. The number of
    points of the grid is given by \code{m^ncol(x)} so that \code{m} needs to be
    decreased as \eqn{d}{d} increases.}
- \item{combine.method}{a string specifying how the parameter \eqn{L}{L} involved
+ \item{L.method}{a string specifying how the parameter \eqn{L}{L} involved
    in the estimation of the bandwidth parameter is computed; see
    Section 5 of the second reference.}
  \item{N}{number of multiplier replications.}
@@ -80,7 +80,7 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
     Kolmogorov-Smirnov change-point statistics.}
   \item{all.statistics}{the values of all four test statistics.}
   \item{all.p.values}{the corresponding p-values.}
-  \item{b}{the value of the parameter \code{b}.}
+  \item{b}{the value of parameter \code{b}.}
 }
 \references{
   M. Holmes, I. Kojadinovic and J-F. Quessy (2013), Nonparametric tests
@@ -99,7 +99,8 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
 }
 \seealso{
   \code{\link{cpTestCn}()} for a related test based on the empirical
-  copula, \code{\link{b.opt}()} for the function used to
+  copula, \code{\link{cpTestRho}()} for a related test based on
+  Spearman's rho, \code{\link{bOptEmpProc}()} for the function used to
   estimate \code{b} from \code{x} if \code{b = NULL}.
 }
 \examples{

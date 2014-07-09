@@ -21,154 +21,11 @@
 
 
 #include <R.h>
-//#include <Rmath.h>
+#include "utilities.h"
 
-#define	MIN(x,y) ((x) > (y) ? (y) : (x))
-#define	MAX(x,y) ((x) < (y) ? (y) : (x))
-
-/***********************************************************************
-
-  Generate dependent multipliers
-
-***********************************************************************/
-
-void gendepmult(int n, int M, int bw, double *weights,
-		double *initseq, double *multipliers)
-{
-    int i, j, m;
-
-    GetRNGstate();
-    for (m = 0; m < M; m++)
-	for (i = 0; i < n; i++)
-	    {
-		multipliers[i + m * n] = 0.0;
-		for (j = 0; j < 2 * bw - 1; j++)
-		    multipliers[i + m * n] += weights[j]
-			* initseq[i + j + m * (n + 2*(bw-1))];
-	    }
-    PutRNGstate();
-}
-
-/***********************************************************************
-
-  Change-point tests based on the empirical cdfs
-  bw: set bw to 1 for the iid case
-
-***********************************************************************/
-
-void cptestF(double *X, int *n, int *d, double *cvm, double *ks, int *M,
-	     double *weights, int *bw, int *seq, double *cvm0,
-	     double *ks0, double *initseq)
-{
-
-    int i, j, k, q;
-    double procq, t, sqrtn = sqrt(*n), multk, multnk;
-    int *ind = Calloc((*n) * (*n), int);
-    double *ecdf = Calloc(*n, double);
-    double *indk = Calloc(*n, double);
-    double *indnk = Calloc(*n, double);
-    double *sumk = Calloc(*n, double);
-    double *sumnk = Calloc(*n, double);
-    double *multipliers = Calloc((*n) * (*M), double);
-
-    /* generate (dependent) multipliers */
-    gendepmult(*n, *M, *bw, weights, initseq, multipliers);
-
-    /* compute 1(X_i <= X_q) and ecdf(X_q) */
-    for (q = 0; q < *n; q++)
-	{
-	    ecdf[q] = 0.0;
-	    for (i = 0; i < *n; i++)
-		{
-		    ind[i + q * (*n)] = 1;
-		    for (j = 0; j < *d; j++)
-			ind[i + q * (*n)] *= (X[i + j * (*n)] <= X[q + j * (*n)]);
-		    ecdf[q] += ind[i + q * (*n)];
-		}
-	ecdf[q] /= *n;
-    }
-
-    /* test statistics */
-    for (q = 0; q < *n; q++)
-	    sumk[q] = 0.0;
-	    //sumnk[q] = ecdf[q] * (*n);
-
-    for (k = 1; k <= *n - 1; k++)
-	{
-	    t = (double)k / (*n);
-	    cvm[k-1] = 0.0;
-	    ks[k-1] = 0.0;
-	    /* eval at X_q */
-	    for (q = 0; q < *n; q++)
-		{
-		    sumk[q] += ind[k - 1 + q * (*n)];
-		    procq = ( sumk[q] - t * ecdf[q] * (*n) ) / sqrtn;
-		    cvm[k-1] += procq * procq;
-		    if (fabs(procq) > ks[k-1])
-			ks[k-1] = fabs(procq);
-		}
-	}
-
-    /* generate N approximate realizations */
-    for (j = 0; j < *M; j++)
-	{
-	    /* realization number j */
-	    multk = 0.0;
-	    multnk = 0.0;
-	    for (q = 0; q < *n; q++)
-		{
-		    sumk[q] = 0.0;
-		    sumnk[q] = 0.0;
-		    for (i = 0; i < *n; i++)
-			sumnk[q] += multipliers[i + j * (*n)] * ind[i + q * (*n)];
-		    if (*seq == 1)
-			{
-			    indk[q] = 0.0;
-			    indnk[q] = ecdf[q] * (*n);
-			}
-		    multnk += multipliers[q + j * (*n)];
-		}
-
-	    for (k = 1; k <= *n - 1; k++)
-		{
-		    t = (double)k / *n;
-		    cvm0[j + (k-1) * (*M)] = 0.0;
-		    ks0[j + (k-1) * (*M)] = 0.0;
-		    multk += multipliers[k - 1 + j * (*n)];
-		    multnk -= multipliers[k - 1 + j * (*n)];
-		    /* eval at X_q */
-		    for (q = 0; q < *n; q++)
-			{
-			    sumk[q] += multipliers[k - 1 + j * (*n)] * ind[k - 1 + q * (*n)];
-			    sumnk[q] -= multipliers[k - 1 + j * (*n)] * ind[k - 1 + q * (*n)];
-			    if (*seq == 1)
-				{
-				    indk[q] += ind[k - 1 + q * (*n)];
-				    indnk[q] -= ind[k - 1 + q * (*n)];
-				    procq =
-					((1 - t) * (sumk[q] - multk * indk[q] / k)
-					 - t * (sumnk[q] -  multnk * indnk[q] / (*n - k)))
-					/ sqrtn;
-				}
-			    else
-				procq = ((1 - t) * (sumk[q] - multk * ecdf[q])
-					 - t * (sumnk[q] -  multnk * ecdf[q])) / sqrtn;
-			    cvm0[j + (k-1) * (*M)] += procq * procq;
-			    if (fabs(procq) > ks0[j + (k-1) * (*M)])
-				ks0[j + (k-1) * (*M)] = fabs(procq);
-			}
-		}
-	}
-
-    Free(ind);
-    Free(multipliers);
-    Free(ecdf);
-    Free(indk);
-    Free(indnk);
-    Free(sumk);
-    Free(sumnk);
-}
-
+/////////////////////////////////////////////////////////////////////////
+// EMPIRICAL COPULA TEST
+/////////////////////////////////////////////////////////////////////////
 
 /***********************************************************************
 
@@ -205,28 +62,6 @@ double derec(double *U, int n, int d, double *u, double *v, double denom, int b,
     return (ec(U, n, d, b, e, u) - ec(U, n, d, b, e, v)) / denom;
 }
 
-/***********************************************************************
-
-  Make pseudo obs from portion b:(e-1) of the data in x; result in V
-  b: line beginning
-  e: line end (+1)
-
-***********************************************************************/
-
-void makepseudoobs(double *x, int *index, int n, int d, int b, int e, double *V)
-{
-    int i, j;
-    if (e == b)
-	return;
-    for (j = 0; j < d; j++)
-	{
-	    for (i = 0; i < e - b; i++)
-		index[i] = i;
-	    rsort_with_index (&x[j * n + b], index, e - b);
-	    for (i = 0; i < e - b; i++)
-		V[j * n + b + index[i]] = (i + 1.0) / (e - b + 1.0);
-	}
-}
 
 /***********************************************************************
 
@@ -309,8 +144,7 @@ void makeinflumat(int n, int d, int b, int e, double *U, double *V,
 ***********************************************************************/
 
 void cpTestC(double *X, int *n, int *d, double *cvm, int *M,
-	     double *weights, int *bw, int *seq, double *cvm0,
-	     double *initseq)
+	     int *we, int *bw, int *seq, double *cvm0, double *initseq)
 {
     int i, j, k, l, m;
     int *index = Calloc(*n, int);
@@ -328,7 +162,7 @@ void cpTestC(double *X, int *n, int *d, double *cvm, int *M,
     double s, diff;
 
     /* generate (dependent) multipliers */
-    gendepmult(*n, *M, *bw, weights, initseq, multipliers);
+    gendepmult(*n, *M, *bw, *we, initseq, multipliers);
 
     /* pseudo-obs in V */
     for (i = 0; i < (*n) * (*d); i++)

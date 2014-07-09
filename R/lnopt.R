@@ -123,18 +123,16 @@ Lval <- function(x, method=mean)
 }
 
 #################################################################################
-## Function for estimating b.opt = round( (ln.opt + 1)/ 2)
+## Function for estimating b^opt = round( (ln^opt + 1)/ 2)
+## in a particular empirical process setting
 #################################################################################
 
-b.opt <- function(x, m=5, weights = c("parzen", "bartlett"),
-                  combine.method=c("max","median","mean","min"))
+bOptEmpProc <- function(x, m=5, weights = c("parzen", "bartlett"),
+                        L.method=c("max","median","mean","min"))
 {
     weights <- match.arg(weights)
-    combine.method <- match.arg(combine.method)
-    kernel <- switch(weights,
-                     bartlett = parzen,
-                     parzen = function(x) convrect(x*4,8))
-    method <- switch(combine.method,
+    L.method <- match.arg(L.method)
+    method <- switch(L.method,
                      min = min,
                      median = median,
                      mean = mean,
@@ -148,7 +146,6 @@ b.opt <- function(x, m=5, weights = c("parzen", "bartlett"),
     ## parameters for adapting the approach of Politis and White (2004)
     kn <- max(5, ceiling(log10(n)))
     lagmax <- ceiling(sqrt(n)) + kn
-    rho.crit <- 1.96 * sqrt(log10(n)/n)
 
     ## make grid -- suboptimal
     z <- seq(1/(m+1), 1 - 1/(m+1), len = m)
@@ -186,12 +183,120 @@ b.opt <- function(x, m=5, weights = c("parzen", "bartlett"),
         }
 
     ## compute Gamma.n and Delta.n
-    Gamma.n.2 <- as.numeric(hessian(kernel,0))^2 / 4 * mean(K.n^2)
+    ## hessian and integral precomputed below
+    ## code: as.numeric(hessian(kernel,0))^2
+    ##       kernel2 <- function(x) kernel(x)^2
+    ##       integrate(kernel2,-1,1)$value
 
-    kernel2 <- function(x) kernel(x)^2
-    Delta.n <- integrate(kernel2,-1,1)$value *
-        (mean(diag(sigma.n))^2 + mean(sigma.n^2))
+    sqrderiv <- switch(weights,
+                       bartlett = 143.9977845,
+                       parzen = 495.136227)
+    integralsqrker <- switch(weights,
+                       bartlett = 0.5392857143,
+                       parzen = 0.3723388234)
+
+    Gamma.n.2 <- sqrderiv / 4 * mean(K.n^2)
+
+
+    Delta.n <- integralsqrker * (mean(diag(sigma.n))^2 + mean(sigma.n^2))
     ln.opt <- (4 * Gamma.n.2 / Delta.n * n)^(1/5)
     return( round((ln.opt + 1) / 2) )
+}
+
+#################################################################################
+## Function for estimating b^opt = round( (ln^opt + 1)/ 2)
+## in the setting of the test for change-point detection
+## based on multivariate extensions of Spearman's rho
+#################################################################################
+
+bOptRho <- function(x,
+                    statistic = c("global", "pairwise"),
+                    weights = c("parzen", "bartlett"),
+                    L.method = c("pseudo","max","median","mean","min"))
+{
+    statistic <- match.arg(statistic)
+    weights <- match.arg(weights)
+    stopifnot(is.matrix(x))
+    n <- nrow(x)
+    d <- ncol(x)
+    stopifnot(d > 1)
+    L.method <- match.arg(L.method)
+
+    ## f in natural order
+    f <- switch(statistic,
+                global = c(rep(0,2^d - 1),1),
+                pairwise = c(rep(0, d + 1), rep(1, choose(d,2)),
+                rep(0, 2^d - choose(d,2) - d - 1)))
+
+    ## convert f into binary order
+    powerset <-  .C("k_power_set",
+                    as.integer(d),
+                    as.integer(d),
+                    powerset = integer(2^d),
+                    PACKAGE="npcp")$powerset
+
+    fbin <- .C("natural2binary",
+               as.integer(d),
+               as.double(f),
+               as.integer(powerset),
+               fbin = double(2^d),
+               PACKAGE="npcp")$fbin
+
+    ## compute influ
+    out <- .C("influRho",
+                as.double(x),
+                as.integer(n),
+                as.integer(d),
+                as.double(fbin),
+                influ = double(n),
+                PACKAGE = "npcp")
+
+    influ <- out$influ
+
+    ## parameters for adapting the approach of Politis and White (2004)
+    kn <- max(5, ceiling(log10(n)))
+    lagmax <- ceiling(sqrt(n)) + kn
+
+    ## compute tau.n
+    tau.n <- as.numeric(ccf(influ, influ, lag.max = lagmax,
+                            type = "covariance", plot = FALSE)$acf)
+
+    ## determine L
+    if (L.method == "pseudo")
+        L <- Lval(matrix(influ), method=min)
+    else
+    {
+        method <- switch(L.method,
+                         min = min,
+                         median = median,
+                         mean = mean,
+                         max = max)
+        L <- Lval(x, method=method)
+    }
+
+    ## compute Gamma.n and Delta.n
+    ## hessian and integral precomputed below
+    ## code:
+    ## kernel <- switch(weights,
+    ##                  bartlett = parzen,
+    ##                  parzen = function(x) convrect(x*4,8))
+    ## as.numeric(hessian(kernel,0))^2
+    ## kernel2 <- function(x) kernel(x)^2
+    ## integrate(kernel2,-1,1)$value
+
+    sqrderiv <- switch(weights,
+                       bartlett = 143.9977845,
+                       parzen = 495.136227)
+    integralsqrker <- switch(weights,
+                       bartlett = 0.5392857143,
+                       parzen = 0.3723388234)
+
+    ft <- flattop(-lagmax:lagmax/L)
+    Gamma.n.2 <- sqrderiv / 4 * sum(ft * (-lagmax:lagmax)^2 * tau.n)^2
+    Delta.n <- integralsqrker * 2 * sum(ft * tau.n)^2
+    ln.opt <- (4 * Gamma.n.2 / Delta.n * n)^(1/5)
+    list(b = round((ln.opt + 1) / 2),
+         influnonseq = influ,
+         fbin = fbin)
 }
 

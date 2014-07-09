@@ -1,6 +1,8 @@
 useDynLib(npcp)
-importFrom("numDeriv", hessian)
+#importFrom("numDeriv", hessian)
 export(cpTestFn)
 export(cpTestCn)
-export(b.opt)
-
+export(cpTestRho)
+export(bOptEmpProc)
+export(cpTestRho)
+#export(bOptRho)

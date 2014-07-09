@@ -1,16 +1,17 @@
-\name{b.opt}
-\alias{b.opt}
+\name{bOptEmpProc}
+\alias{bOptEmpProc}
 \title{Bandwidth parameter estimation}
 \description{
-  Estimates the bandwidth parameter controlling the serial dependence when
+  In a particular empirical process setting, estimates the
+  bandwidth parameter controlling the serial dependence when
   generating dependent multiplier sequences using the 'moving average
   approach'; see Sections 5 and 6.1 of the third reference. This
   function is called in the functions \code{\link{cpTestFn}()} and
   \code{\link{cpTestCn}()} if \code{b} is set to \code{NULL}.
 }
 \usage{
-b.opt(x, m=5, weights = c("parzen", "bartlett"),
-      combine.method=c("max","median","mean","min"))
+bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
+            L.method=c("max","median","mean","min"))
 }
 \arguments{
   \item{x}{a data matrix whose rows are continuous observations.}
@@ -23,7 +24,7 @@ b.opt(x, m=5, weights = c("parzen", "bartlett"),
    parameter; see Section 5 of the third reference. The number of
    points of the grid is given by \code{m^ncol(x)} so that \code{m} needs to be
    decreased as \eqn{d}{d} increases.}
- \item{combine.method}{a string specifying how the parameter \code{L} involved
+ \item{L.method}{a string specifying how the parameter \code{L} involved
    in the estimation of the bandwidth parameter is computed; see
    Section 5 of the third reference.}
 }
