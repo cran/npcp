@@ -300,3 +300,49 @@ bOptRho <- function(x,
          fbin = fbin)
 }
 
+
+#################################################################################
+## Function for estimating b^opt = round( (ln^opt + 1)/ 2)
+## in the setting of the tests for change-point detection
+## based on U-statistics
+#################################################################################
+
+bOptU <- function(influ, weights = c("parzen", "bartlett"))
+{
+    weights <- match.arg(weights)
+    n <- length(influ)
+
+    ## parameters for adapting the approach of Politis and White (2004)
+    kn <- max(5, ceiling(log10(n)))
+    lagmax <- ceiling(sqrt(n)) + kn
+
+    ## compute gamma.n
+    gamma.n <- as.numeric(ccf(influ, influ, lag.max = lagmax,
+                            type = "covariance", plot = FALSE)$acf)
+
+    ## determine L
+    L <- Lval(matrix(influ), method=min)
+
+    ## compute Gamma.n and Delta.n
+    ## hessian and integral precomputed below
+    ## code:
+    ## kernel <- switch(weights,
+    ##                  bartlett = parzen,
+    ##                  parzen = function(x) convrect(x*4,8))
+    ## as.numeric(hessian(kernel,0))^2
+    ## kernel2 <- function(x) kernel(x)^2
+    ## integrate(kernel2,-1,1)$value
+
+    sqrderiv <- switch(weights,
+                       bartlett = 143.9977845,
+                       parzen = 495.136227)
+    integralsqrker <- switch(weights,
+                       bartlett = 0.5392857143,
+                       parzen = 0.3723388234)
+
+    ft <- flattop(-lagmax:lagmax/L)
+    Gamma.n.2 <- sqrderiv / 4 * sum(ft * (-lagmax:lagmax)^2 * gamma.n)^2
+    Delta.n <- integralsqrker * 2 * sum(ft * gamma.n)^2
+    ln.opt <- (4 * Gamma.n.2 / Delta.n * n)^(1/5)
+    round((ln.opt + 1) / 2)
+}

@@ -89,7 +89,7 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, Bernoulli, in press, \url{http://arxiv.org/abs/1306.3930}.
 }
 \note{
   Note that when the observations are continuous univariate and serially
@@ -100,7 +100,8 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
 \seealso{
   \code{\link{cpTestCn}()} for a related test based on the empirical
   copula, \code{\link{cpTestRho}()} for a related test based on
-  Spearman's rho, \code{\link{bOptEmpProc}()} for the function used to
+  Spearman's rho, \code{\link{cpTestU}()} for related tests based on
+  U-statistics, \code{\link{bOptEmpProc}()} for the function used to
   estimate \code{b} from \code{x} if \code{b = NULL}.
 }
 \examples{

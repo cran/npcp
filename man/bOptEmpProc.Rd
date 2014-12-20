@@ -50,7 +50,7 @@ bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, Bernoulli, in press, \url{http://arxiv.org/abs/1306.3930}.
 }
 %\note{}
 \seealso{

@@ -72,18 +72,20 @@ cpTestCn(x, method = c("seq", "nonseq"), b = 1,
 \references{
   A. B\enc{ü}{u}cher, I. Kojadinovic, T. Rohmer and J. Segers (2014),
   Detecting changes in cross-sectional dependence in multivariate
-  time series, \url{http://arxiv.org/abs/1206.2557}.
+  time series, Journal of Multivariate Analysis 132, pages 111-128,
+  \url{http://arxiv.org/abs/1206.2557}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, Bernoulli, in press, \url{http://arxiv.org/abs/1306.3930}.
 }
 \note{
   These tests were derived under the assumption of continuous margins.
 }
 \seealso{
   \code{\link{cpTestRho}()} for a related test based on
-  Spearman's rho, \code{\link{cpTestFn}()} for a related test based
+  Spearman's rho, \code{\link{cpTestU}()} for related tests based on
+  U-statistics, \code{\link{cpTestFn}()} for a related test based
   on the multivariate empirical c.d.f., \code{\link{bOptEmpProc}()} for the
   function used to estimate \code{b} from \code{x} if \code{b = NULL}.
 }

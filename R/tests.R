@@ -152,6 +152,22 @@ cpTestCn <- function(x, method = c("seq", "nonseq"), b = 1,
 }
 
 #################################################################################
+## Related to the cdf of the KS statistic
+## From the source of ks.test -- credit to Rcore
+#################################################################################
+
+pkolmogorov1x <- function(x, n)
+{
+    if (x <= 0)
+        return(0)
+    if (x >= 1)
+        return(1)
+    j <- seq.int(from = 0, to = floor(n * (1 - x)))
+    1 - x * sum(exp(lchoose(n, j) + (n - j) * log(1 - x - j/n) + (j - 1) *
+                        log(x + j/n)))
+}
+
+#################################################################################
 ## Change-point tests based on multivariate extensions of Spearman's rho
 #################################################################################
 
@@ -263,19 +279,6 @@ cpTestRho <- function(x, method = c("mult", "asym.var"),
         }
         else
         {
-            ## related to the cdf of the KS statistic
-            ## from the source of ks.test -- credit to Rcore
-            pkolmogorov1x <- function(x, n) {
-                if (x <= 0)
-                    return(0)
-                if (x >= 1)
-                    return(1)
-                j <- seq.int(from = 0, to = floor(n * (1 -
-                                       x)))
-                1 - x * sum(exp(lchoose(n, j) +
-                                (n - j) * log(1 - x - j/n) + (j - 1) *
-                                log(x + j/n)))
-            }
             #if (n <= 100)
             p.value <- 2 * (1 - pkolmogorov1x(stat / sqrt(out$avar), n))
             #else
@@ -292,3 +295,109 @@ cpTestRho <- function(x, method = c("mult", "asym.var"),
                    data.name = deparse(substitute(x))))
 }
 
+#################################################################################
+## Change-point tests based on U-statistics
+#################################################################################
+
+cpTestU <- function(x, statistic = c("kendall", "variance", "gini"),
+                    method = c("seq", "nonseq", "asym.var"),
+                    b = 1, weights = c("parzen", "bartlett"),
+                    N = 1000, init.seq = NULL)
+{
+    method <- match.arg(method)
+    statistic <- match.arg(statistic)
+    weights <- match.arg(weights)
+
+    stopifnot(is.matrix(x))
+    n <- nrow(x)
+    d <- ncol(x)
+    if (statistic %in% c("variance", "gini"))
+        stopifnot(d==1)
+    if (statistic == "kendall")
+        stopifnot(d > 1)
+
+    npb <- n - 3 # number of possible breakpoints
+
+    ## kernel
+    h.func <- switch(statistic,
+                     variance = function(x, y) (x - y)^2/2,
+                     gini = function(x, y) abs(x - y),
+                     kendall = function(x, y) prod(x < y) + prod(y < x))
+
+    h <- matrix(0,n,n)
+    for (i in seq_len(n))
+        for (j in  seq_len(i))
+            if (i != j)
+            {
+                h[i,j] <- h.func(x[i,],x[j,])
+                h[j,i] <- h[i,j]
+            }
+
+    influ <- colSums(h) / (n-1) ## h1.n without centering term
+
+    if (is.null(b))
+        b <- bOptU(influ, weights=weights)
+
+    m <- switch(method,
+                "seq" = 1,
+                "nonseq" = 2,
+                "asym.var" = 3)
+
+    if (method %in% c("seq", "nonseq"))
+    {
+        ## initial standard normal sequence for generating dependent multipliers
+        if (is.null(init.seq))
+            init.seq <- rnorm(N * (n + 2 * (b - 1)))
+        else
+            stopifnot(length(init.seq) == N * (n + 2 * (b - 1)))
+    }
+
+    ## test
+    out <- .C("cpTestU",
+              as.double(h),
+              as.integer(n),
+              as.double(influ),
+              u = double(npb),
+              as.integer(N),
+              as.integer(weights == "bartlett"),
+              as.integer(b),
+              as.integer(m),
+              u0 = double(N * npb),
+              avar = double(1),
+              as.double(init.seq),
+              PACKAGE = "npcp")
+
+    u <- out$u
+    stat <- max(u)
+
+    if (method %in% c("seq", "nonseq"))
+    {
+        u0 <- matrix(out$u0,N,npb)
+        p.value <- ( sum( apply(u0,1,max) >= stat ) + 0.5 ) / (N + 1)
+    }
+    else
+    {
+        if (!(out$avar > .Machine$double.eps)) ## OK?
+        {
+            cat("b =",b,"\n")
+            cat("h1.n",influ,"\n")
+            stop("The asymptotic variance is numerically equal to zero.")
+        }
+        else
+        {
+            #if (n <= 100)
+            p.value <- 2 * (1 - pkolmogorov1x(stat / (2 * sqrt(out$avar)), n))
+            #else
+            #p.value <- 2 * exp(-2 * n * stat^2 / out$avar)
+            p.value <- min(1, max(0, p.value)) ## guard as in ks.test
+        }
+    }
+
+    structure(class = "htest",
+              list(method = sprintf("Test for change-point detection based on U-statistics with 'statistic'=\"%s\" and 'method'=\"%s\"", statistic, method),
+                   statistic = c(umax=stat),
+                   p.value = p.value,
+                   u = c(u=u), b = c(b=b),
+                   data.name = deparse(substitute(x))))
+
+}
