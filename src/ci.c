@@ -21,26 +21,49 @@
 
 
 #include <R.h>
-#include <Rmath.h>
-#include "utilities.h"
+/* #include <Rmath.h> */
+/* #include "utilities.h" */
 
-/////////////////////////////////////////////////////////////////////////
-// U-STAT confidence intervals
-/////////////////////////////////////////////////////////////////////////
+/* ///////////////////////////////////////////////////////////////////////// */
+/* // U-STAT confidence intervals */
+/* ///////////////////////////////////////////////////////////////////////// */
 
+/* /\*********************************************************************** */
 
-/***********************************************************************
+/*   U-STAT confidence intervals */
+/*   Asymptotic variance */
 
-  U-STAT confidence intervals
-  bw: set bw to 1 for the iid case
+/* ***********************************************************************\/ */
 
-***********************************************************************/
+/* double asympvar(int n, double *h1, int w, int bw) */
+/* { */
+/*     int i, j; */
+/*     double ln = 2 * bw - 1, avar = 0.0; */
+/*     for (i = 0; i < n; i++) */
+/* 	for (j = MAX(0, i - ln + 1); j < MIN(n, i + ln); j++) */
+/* 	    //abs(i - j) < ln */
+/* 	    if (w == 1) */
+/* 		avar += parzen( (double)(i - j) / (double)ln) * h1[i] * h1[j]; */
+/* 	    else */
+/* 		avar += convrect( 4.0 * (double)(i - j) / (double)ln, 8) */
+/* 		    * h1[i] * h1[j]; */
+/*     return(avar / n); */
+/* } */
+
+/* /\*********************************************************************** */
+
+/*   U-STAT confidence intervals */
+/*   bw: set bw to 1 for the iid case */
+
+/* ***********************************************************************\/ */
 
 /* void ciU(double *h, int *n, double *influ, double *stat, int *M, */
-/* 	 int *w, int *bw, double *stat0, double *avar, double *initseq) */
+/* 	 int *w, int *bw, double *stat0, double *avar, double *avar0, */
+/* 	 double *initseq) */
 /* { */
-/*     int i, j, m, ln; */
+/*     int i, j, m; //, ln; */
 /*     double *multipliers = Calloc((*n) * (*M), double); */
+/*     double *h1 = Calloc(*n, double); */
 /*     double un, sqrtn = sqrt(*n); */
 
 /*     /\* generate (dependent) multipliers *\/ */
@@ -55,8 +78,7 @@
 /*     un /= (*n) * (*n - 1) / 2.0; */
 /*     *stat = un; */
 
-
-/*     //if (*method == 1) /\* generate M approximate realizations *\/ */
+/*     /\* generate M approximate realizations of the U process *\/ */
 /*     for (m = 0; m < *M; m++) */
 /* 	{ */
 /* 	    un = 0.0; */
@@ -67,21 +89,20 @@
 /* 	    un /= (*n) * (*n - 1) / 2.0; */
 /* 		stat0[m] = sqrtn * un; */
 /* 	} */
-/*     //else /\* asymptotic variance *\/ */
-/*     //	{ */
-/*     ln = 2 * (*bw) - 1; */
-/*     *avar = 0.0; */
+
+/*     /\* asymptotic variance *\/ */
 /*     for (i = 0; i < *n; i++) */
-/* 	for (j = MAX(0, i - ln + 1); j < MIN(*n, i + ln); j++) */
-/* 	    //abs(i - j) < ln */
-/* 	    if (*w == 1) */
-/* 		*avar += parzen( (double)(i - j) / (double)ln) */
-/* 		    * (influ[i] - *stat) * (influ[j] - *stat); */
-/* 	    else */
-/* 		*avar += convrect( 4.0 * (double)(i - j) / (double)ln, 8) */
-/* 		    * (influ[i] - *stat) * (influ[j] - *stat); */
-/*     *avar /= *n; */
-/*     // } */
+/* 	h1[i] = influ[i] - *stat; */
+/*     *avar = asympvar(*n, h1, *w, *bw); */
+
+/*      /\* generate M approximate realizations of the variance of the U process *\/ */
+/*     for (m = 0; m < *M; m++) */
+/* 	{ */
+/* 	    for (i = 0; i < *n; i++) */
+/* 		h1[i] = (multipliers[i + m * (*n)] + 1.0) * (influ[i] - *stat); // changed */
+/* 	    avar0[m] = asympvar(*n, h1, *w, *bw); */
+/* 	} */
 
 /*     Free(multipliers); */
+/*     Free(h1); */
 /* } */

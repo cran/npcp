@@ -368,6 +368,7 @@ cpTestU <- function(x, statistic = c("kendall", "variance", "gini"),
               PACKAGE = "npcp")
 
     u <- out$u
+    names(u) <- paste0("u",2:(n-2))
     stat <- max(u)
 
     if (method %in% c("seq", "nonseq"))
@@ -397,7 +398,127 @@ cpTestU <- function(x, statistic = c("kendall", "variance", "gini"),
               list(method = sprintf("Test for change-point detection based on U-statistics with 'statistic'=\"%s\" and 'method'=\"%s\"", statistic, method),
                    statistic = c(umax=stat),
                    p.value = p.value,
-                   u = c(u=u), b = c(b=b),
+                   u = u, b = c(b=b),
                    data.name = deparse(substitute(x))))
 
+}
+
+
+#################################################################################
+## NOT EXPORTED: for testing
+#################################################################################
+
+fitGEV <- function(x, method = c("pwm", "gpwm"), gamma=-0.35, delta=0,
+                   landwehr = TRUE, noties = TRUE)
+{
+    method <- match.arg(method)
+    stopifnot(is.vector(x, "numeric"))
+    stopifnot(is.vector(gamma, "numeric"))
+    stopifnot(is.vector(delta, "numeric"))
+    n <- length(x)
+    meth <- switch(method, "pwm" = 1, "gpwm" = 2)
+    p <- 3 # number of statistics
+
+    out <- .C("fitGEV",
+              as.double(x),
+              as.integer(n),
+              as.double(gamma),
+              as.double(delta),
+              as.integer(meth),
+              as.integer(landwehr),
+              as.integer(noties),
+              param = double(p),
+              avar = double(p),
+              PACKAGE = "npcp")
+
+    sderr <- sqrt(out$avar/n)
+
+    list(parameters=c(loc = out$param[1], scale = out$param[2], shape = out$param[3]),
+         sderrs = c(loc = sderr[1], scale = sderr[2], shape = sderr[3]))
+}
+
+#################################################################################
+## Change-point tests based on probability weighted moments
+## for block maxima with the GEV in mind
+#################################################################################
+
+cpTestBM <- function(x, method = c("pwm", "gpwm"), r=10)
+{
+    stopifnot(is.vector(x, "numeric"))
+    n <- length(x)
+    r <- as.integer(r)
+    stopifnot(r > 0 && n - (2 * r - 1) >= 1)
+    method <- match.arg(method)
+
+    ## internal parameters (see paper)
+    r <- 10 # omit breakpoints at the beginning and the end
+    gamma.var <- -0.35 # for cdf from entire sample
+    delta.var <- 0 # for cdf from entire sample
+    gamma.stat <- 0 # for cdfs from subsamples
+    delta.stat <- 0 # for cdfs from subsamples
+    landwehr <- TRUE # use Landwehr's PWM estimates if method=="pwm"
+    noties <- TRUE # continous distribution assumed
+    center <- TRUE # center wrt to location parameter estimate
+
+    npb <- n - (2 * r - 1) # number of possible breakpoints
+
+
+    meth <- switch(method, "pwm" = 1, "gpwm" = 2)
+    p <- 3 # number of statistics
+
+    out <- .C("cptestBM",
+              as.double(x),
+              as.integer(n),
+              as.integer(r), # omit breakpoints at the beginning and the end
+              stat = double(npb * p),
+              as.double(gamma.var),
+              as.double(delta.var),
+              as.double(gamma.stat),
+              as.double(delta.stat),
+              as.integer(meth),
+              as.integer(landwehr),
+              as.integer(noties),
+              as.integer(center),
+              param = double(p),
+              avar = double(p),
+              PACKAGE = "npcp")
+
+    ## statistics
+    stat <- matrix(out$stat, npb, p)
+    stat.loc <- stat[,1]
+    names(stat.loc) <- paste0("loc",r:(n-r))
+    stat.scale <- stat[,2]
+    names(stat.scale) <- paste0("scale",r:(n-r))
+    stat.shape <- stat[,3]
+    names(stat.shape) <- paste0("shape",r:(n-r))
+    maxstat.loc <- max(stat.loc)
+    maxstat.scale <- max(stat.scale)
+    maxstat.shape <- max(stat.shape)
+
+    ## corresponding p-values
+    if (any(out$avar <= .Machine$double.eps)) ## OK?
+        stop("Some of the asymptotic variances are numerically equal to zero.")
+    else
+    {
+        var.offset <- if (method=="pwm") c(0,10,20) else rep(0,3) ## variance offset
+        out$avar <- out$avar * (var.offset + n)/n
+        p.value.loc <- 2 * (1 - pkolmogorov1x(maxstat.loc / sqrt(out$avar[1]), n))
+        p.value.loc <- min(1, max(0, p.value.loc)) ## guard as in ks.test
+        p.value.scale <- 2 * (1 - pkolmogorov1x(maxstat.scale / sqrt(out$avar[2]), n))
+        p.value.scale <- min(1, max(0, p.value.scale)) ## guard as in ks.test
+        p.value.shape <- 2 * (1 - pkolmogorov1x(maxstat.shape / sqrt(out$avar[3]), n))
+        p.value.shape <- min(1, max(0, p.value.shape)) ## guard as in ks.test
+    }
+
+
+    structure(class = "htest",
+              list(method = sprintf("Test for change-point detection in the distribution of block maxima with 'method'=\"%s\"", method),
+                   statistic = c(loc.stat = maxstat.loc, scale.stat = maxstat.scale, shape.stat = maxstat.shape),
+                   #parameter = c(loc.param = out$param[1], scale.param = out$param[2], shape.param = out$param[3]),
+                   parameter = c(p.value.loc = p.value.loc, p.value.scale = p.value.scale, p.value.shape = p.value.shape), ## improve
+                   pvalues = c(p.value.loc = p.value.loc, p.value.scale = p.value.scale, p.value.shape = p.value.shape),
+                   stats.loc = stat.loc,
+                   stats.scale = stat.scale,
+                   stats.shape = stat.shape,
+                   data.name = deparse(substitute(x))))
 }

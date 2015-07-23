@@ -37,7 +37,7 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
   \item{b}{strictly positive integer specifying the value of the
     bandwidth parameter determining the serial dependence when
     generating dependent multiplier sequences using the 'moving average
-    approach'; see Section 6.1 of the second reference. The default
+    approach'; see Section 5 of the second reference. The default
     value is 1, which will create i.i.d. multiplier
     sequences suitable for serially independent observations. If set to
     \code{NULL}, \code{b} will be estimated from \code{x} using the
@@ -45,7 +45,7 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
     Section 5 of the second reference.}
  \item{weights}{a string specifying the kernel for creating the
    weights used in the generation of dependent multiplier sequences within the
-   'moving average approach'; see Section 6.1 of the second reference.}
+   'moving average approach'; see Section 5 of the second reference.}
  \item{m}{a strictly positive integer specifying the number of points of the
    uniform grid on \eqn{(0,1)^d}{(0,1)^d} (where \eqn{d}{d} is
    \code{ncol(x)}) involved in the estimation of the bandwidth
@@ -89,7 +89,7 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, Bernoulli, in press, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, \emph{Bernoulli}, in press, \url{http://arxiv.org/abs/1306.3930}.
 }
 \note{
   Note that when the observations are continuous univariate and serially

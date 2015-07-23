@@ -32,14 +32,14 @@ cpTestRho(x, method = c("mult", "asym.var"),
   \item{b}{strictly positive integer specifying the value of the
     bandwidth parameter determining the serial dependence when
     generating dependent multiplier sequences using the 'moving average
-    approach'; see Section 6.1 of the second reference. The default
+    approach'; see Section 5 of the second reference. The default
     value is 1, which will create i.i.d. multiplier
     sequences suitable for serially independent observations. If set to
     \code{NULL}, \code{b} will be estimated from \code{x} using the
     procedure described in the first reference.}
  \item{weights}{a string specifying the kernel for creating the
    weights used in the generation of dependent multiplier sequences within the
-   'moving average approach'; see Section 6.1 of the second reference.}
+   'moving average approach'; see Section 5 of the second reference.}
  \item{N}{number of multiplier replications.}
  \item{init.seq}{a sequence of independent standard normal variates of
    length \code{N * (nrow(x) + 2 * (b - 1))} used to generate dependent
@@ -72,11 +72,12 @@ cpTestRho(x, method = c("mult", "asym.var"),
 \references{
   I. Kojadinovic, J-F. Quessy and T. Rohmer (2014),
   Testing the constancy of Spearman's rho in multivariate time series,
+  \emph{Annals of the Institute of Statistical Mathematics}, in press,
   \url{http://arxiv.org/abs/1407.1624}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, Bernoulli, in press, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, \emph{Bernoulli}, in press, \url{http://arxiv.org/abs/1306.3930}.
 }
 \note{
   These tests were derived under the assumption of continuous margins.

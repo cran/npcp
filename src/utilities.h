@@ -38,5 +38,6 @@ double div_diff_xn_1_y_plus(int n, double *a, double y);
 void pdf_sum_unif(int *n, double *y, int *ny, double *pdfy);
 void gendepmult(int n, int M, int bw, int w, double *initseq, double *multipliers);
 void makepseudoobs(double *x, int *index, int n, int d, int b, int e, double *V);
+double zeroin(double ax,double bx,double (*f)(), double tol); // see zeroin.c
 
 #endif

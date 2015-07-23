@@ -52,7 +52,7 @@
 ##                 h[j,i] <- h[i,j]
 ##             }
 
-##     influ <- colMeans(h) ## h1.n without centering term
+##     influ <- colSums(h) / (n-1) ## h1.n without centering term
 
 ##     if (is.null(b))
 ##         b <- bOptU(influ, weights=weights)
@@ -81,8 +81,9 @@
 ##               as.integer(b),
 ##               u0 = double(N),
 ##               avar = double(1),
+##               avar0 = double(N),
 ##               as.double(init.seq),
 ##               PACKAGE = "npcp")
 
-##     list(stat=out$u, stat0=out$u0, b=b, sd=2 * sqrt(out$avar))
+##     list(stat=out$u, stat0=out$u0, b=b, sd=2*sqrt(out$avar), sd0=2*sqrt(out$avar0))
 ## }

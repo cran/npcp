@@ -1,17 +1,18 @@
 Package: npcp
 Type: Package
-Title: Some nonparametric tests for change-point detection in
-        (multivariate) observations
-Version: 0.1-1
-Date: 2014-12-20
+Title: Some Nonparametric Tests for Change-Point Detection in Possibly
+        Multivariate Observations
+Version: 0.1-6
+Date: 2015-07-23
 Author: Ivan Kojadinovic
 Maintainer: Ivan Kojadinovic <ivan.kojadinovic@univ-pau.fr>
+Imports: stats
 Suggests: copula
-Description: Provides nonparametric tests for assessing whether possibly serially dependent (multivariate) observations have the same c.d.f. or not. In addition to tests focusing directly on the (multivariate) c.d.f., the package contains tests designed to be particularly sensitive to changes in the underlying copula, Spearman's rho or certain quantities that can be estimated using one-sample U-statistics of order two such as the variance, Gini's mean difference or Kendall's tau.
+Description: Provides nonparametric tests for assessing whether possibly serially dependent univariate or multivariate observations have the same c.d.f. or not. In addition to tests focusing directly on the c.d.f., the package contains tests designed to be particularly sensitive to changes in the underlying copula, Spearman's rho or certain quantities that can be estimated using one-sample U-statistics of order two such as the variance, Gini's mean difference or Kendall's tau. The latest addition is a nonparametric test for detecting changes in the distribution of independent block maxima.
 License: GPL (>= 3) | file LICENCE
 LazyLoad: yes
 Encoding: UTF-8
-Packaged: 2014-12-20 11:37:32 UTC; root
 NeedsCompilation: yes
+Packaged: 2015-07-23 17:41:08 UTC; ikojadin
 Repository: CRAN
-Date/Publication: 2014-12-20 13:55:28
+Date/Publication: 2015-07-24 08:41:09

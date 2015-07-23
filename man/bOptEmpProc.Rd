@@ -5,7 +5,7 @@
   In a particular empirical process setting, estimates the
   bandwidth parameter controlling the serial dependence when
   generating dependent multiplier sequences using the 'moving average
-  approach'; see Sections 5 and 6.1 of the third reference. This
+  approach'; see Section 5 of the third reference. This
   function is called in the functions \code{\link{cpTestFn}()} and
   \code{\link{cpTestCn}()} if \code{b} is set to \code{NULL}.
 }
@@ -17,7 +17,7 @@ bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
   \item{x}{a data matrix whose rows are continuous observations.}
   \item{weights}{a string specifying the kernel for creating the
    weights used in the generation of dependent multiplier sequences within the
-   'moving average approach'; see Section 6.1 of the third reference.}
+   'moving average approach'; see Section 5 of the third reference.}
   \item{m}{a strictly positive integer specifying the number of points of the
    uniform grid on \eqn{(0,1)^d}{(0,1)^d} (where \eqn{d}{d} is
    \code{ncol(x)}) involved in the estimation of the bandwidth
@@ -50,7 +50,7 @@ bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, Bernoulli, in press, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, \emph{Bernoulli}, in press, \url{http://arxiv.org/abs/1306.3930}.
 }
 %\note{}
 \seealso{

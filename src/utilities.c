@@ -186,8 +186,7 @@ void gendepmult(int n, int M, int bw, int w, double *initseq, double *multiplier
 		weights[j + bw - 1] /= sqrt(norm);
 	}
 
-    /* generate dependent multipliers */
-    GetRNGstate();
+    /* dependent multipliers */
     for (m = 0; m < M; m++)
 	for (i = 0; i < n; i++)
 	    {
@@ -196,7 +195,6 @@ void gendepmult(int n, int M, int bw, int w, double *initseq, double *multiplier
 		    multipliers[i + m * n] += weights[j]
 			* initseq[i + j + m * (n + 2*(bw-1))];
 	    }
-    PutRNGstate();
 
     Free(weights);
 }

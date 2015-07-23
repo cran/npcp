@@ -27,7 +27,7 @@ cpTestCn(x, method = c("seq", "nonseq"), b = 1,
   \item{b}{strictly positive integer specifying the value of the
     bandwidth parameter determining the serial dependence when
     generating dependent multiplier sequences using the 'moving average
-    approach'; see Section 6.1 of the second reference. The default
+    approach'; see Section 5 of the second reference. The default
     value is 1, which will create i.i.d. multiplier
     sequences suitable for serially independent observations. If set to
     \code{NULL}, \code{b} will be estimated from \code{x} using the
@@ -35,7 +35,7 @@ cpTestCn(x, method = c("seq", "nonseq"), b = 1,
     Section 5 of the second reference.}
  \item{weights}{a string specifying the kernel for creating the
    weights used in the generation of dependent multiplier sequences within the
-   'moving average approach'; see Section 6.1 of the second reference.}
+   'moving average approach'; see Section 5 of the second reference.}
   \item{m}{a strictly positive integer specifying the number of points of the
    uniform grid on \eqn{(0,1)^d}{(0,1)^d} (where \eqn{d}{d} is
    \code{ncol(x)}) involved in the estimation of the bandwidth
@@ -72,12 +72,12 @@ cpTestCn(x, method = c("seq", "nonseq"), b = 1,
 \references{
   A. B\enc{ü}{u}cher, I. Kojadinovic, T. Rohmer and J. Segers (2014),
   Detecting changes in cross-sectional dependence in multivariate
-  time series, Journal of Multivariate Analysis 132, pages 111-128,
+  time series, \emph{Journal of Multivariate Analysis} 132, pages 111-128,
   \url{http://arxiv.org/abs/1206.2557}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, Bernoulli, in press, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, \emph{Bernoulli}, in press, \url{http://arxiv.org/abs/1306.3930}.
 }
 \note{
   These tests were derived under the assumption of continuous margins.
