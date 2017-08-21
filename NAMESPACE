@@ -1,9 +1,31 @@
 useDynLib(npcp)
-importFrom("stats", "acf", "ccf", "median", "rnorm")
+importFrom("stats", "acf", "ccf", "median", "rnorm", "qnorm")
 #importFrom("numDeriv", hessian)
-export(cpTestFn)
-export(cpTestCn)
-export(cpTestRho)
-export(cpTestU)
+export(cpDist) #cpTestFn
+export(cpCopula) #cpTestCn
+export(cpRho) #cpTestRho
+
+## .cpTestU
+export(cpMean)
+export(cpVar)
+export(cpGini)
+export(cpTau)
+export(cpCov)
+export(cpAutocov)
+
+## bandwidth
+export(bOpt)
 export(bOptEmpProc)
-export(cpTestBM)
+
+## Block maxima
+export(cpBlockMax)
+
+## serial tests
+export(cpAutocop)
+export(stDistAutocop)
+
+# export(stAutocov)
+# export(cpMeanIID)
+# export(cpSerialFn)
+# export(cpSerialTau)
+# export(cpSerialRho)

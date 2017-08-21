@@ -1,18 +1,19 @@
-\name{cpTestCn}
-\alias{cpTestCn}
-\title{Test for change-point detection based on the empirical copula}
+\name{cpCopula}
+\alias{cpCopula}
+\title{Test for Change-Point Detection in Multivariate Observations
+  Sensitive to Changes in the Copula}
 \description{
   Nonparametric test for change-point detection particularly sensitive
   to changes in the copula of multivariate continuous observations. The
   observations can be serially independent or dependent (strongly mixing).
   Approximate p-values for the test statistic are obtained by means of a
-  \emph{multiplier} approach. Details can be found in first reference.
+  \emph{multiplier} approach. Details can be found in the first reference.
 }
 \usage{
-cpTestCn(x, method = c("seq", "nonseq"), b = 1,
+cpCopula(x, method = c("seq", "nonseq"), b = NULL,
          weights = c("parzen", "bartlett"), m = 5,
          L.method=c("max","median","mean","min"),
-         N = 1000, init.seq = NULL)
+         N = 1000, init.seq = NULL, include.replicates = FALSE)
 }
 \arguments{
   \item{x}{a data matrix whose rows are multivariate continuous
@@ -27,8 +28,8 @@ cpTestCn(x, method = c("seq", "nonseq"), b = 1,
   \item{b}{strictly positive integer specifying the value of the
     bandwidth parameter determining the serial dependence when
     generating dependent multiplier sequences using the 'moving average
-    approach'; see Section 5 of the second reference. The default
-    value is 1, which will create i.i.d. multiplier
+    approach'; see Section 5 of the second reference. The
+    value 1 will create i.i.d. multiplier
     sequences suitable for serially independent observations. If set to
     \code{NULL}, \code{b} will be estimated from \code{x} using the
     function \code{\link{bOptEmpProc}()}; see the procedure described in
@@ -49,6 +50,9 @@ cpTestCn(x, method = c("seq", "nonseq"), b = 1,
  \item{init.seq}{a sequence of independent standard normal variates of
    length \code{N * (nrow(x) + 2 * (b - 1))} used to generate dependent
    multiplier sequences.}
+ \item{include.replicates}{a logical specifying whether the
+   object of \code{\link{class}} \code{htest} returned by the function
+   (see below) will include the multiplier replicates.}
 }
 \details{
   The approximate p-value is computed as
@@ -72,21 +76,22 @@ cpTestCn(x, method = c("seq", "nonseq"), b = 1,
 \references{
   A. B\enc{ü}{u}cher, I. Kojadinovic, T. Rohmer and J. Segers (2014),
   Detecting changes in cross-sectional dependence in multivariate
-  time series, \emph{Journal of Multivariate Analysis} 132, pages 111-128,
+  time series, \emph{Journal of Multivariate Analysis} \bold{132}, pages 111-128,
   \url{http://arxiv.org/abs/1206.2557}.
 
-  A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
+  A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, \emph{Bernoulli}, in press, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
+  \url{http://arxiv.org/abs/1306.3930}.
 }
 \note{
   These tests were derived under the assumption of continuous margins.
 }
 \seealso{
-  \code{\link{cpTestRho}()} for a related test based on
-  Spearman's rho, \code{\link{cpTestU}()} for related tests based on
-  U-statistics, \code{\link{cpTestFn}()} for a related test based
-  on the multivariate empirical c.d.f., \code{\link{bOptEmpProc}()} for the
+  \code{\link{cpRho}()} for a related test based on
+  Spearman's rho, \code{\link{cpTau}()} for a related test based on
+  Kendall's tau, \code{\link{cpDist}()} for a related test based
+  on the multivariate empirical d.f., \code{\link{bOptEmpProc}()} for the
   function used to estimate \code{b} from \code{x} if \code{b = NULL}.
 }
 \examples{
@@ -94,14 +99,13 @@ cpTestCn(x, method = c("seq", "nonseq"), b = 1,
 require(copula)
 n <- 100
 k <- 50 ## the true change-point
-u <- rCopula(k,gumbelCopula(1.5))
-v <- rCopula(n-k,gumbelCopula(3))
+u <- rCopula(k, gumbelCopula(1.5))
+v <- rCopula(n - k, gumbelCopula(3))
 x <- rbind(u,v)
-cp <- cpTestCn(x)
+cp <- cpCopula(x, b = 1)
 cp
-## estimated change-point
-which(cp$cvm == max(cp$cvm))
-}
+## Estimated change-point
+which(cp$cvm == max(cp$cvm))}
 }
 \keyword{htest}
 \keyword{multivariate}

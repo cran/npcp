@@ -1,6 +1,6 @@
 #################################################################################
 ##
-##   R package npcp by Ivan Kojadinovic Copyright (C) 2014
+##   R package npcp by Ivan Kojadinovic Copyright (C) 2017
 ##
 ##   This file is part of the R package npcp.
 ##
@@ -23,19 +23,16 @@
 ## Utility functions
 #################################################################################
 
-bartlett <- function(x)
-{
+bartlett <- function(x) {
     pmax(1 - abs(x), 0)
 }
 
-parzen <- function(x)
-{
+parzen <- function(x) {
     ifelse(abs(x) <= 1/2, 1 - 6 * x^2 + 6 * abs(x)^3,
            ifelse(1/2 <= abs(x) & abs(x) <= 1, 2 * (1 - abs(x))^3, 0))
 }
 
-pdfsumunif <- function(x,n)
-{
+pdfsumunif <- function(x,n) {
     nx <- length(x)
 
     .C("pdf_sum_unif",
@@ -46,13 +43,11 @@ pdfsumunif <- function(x,n)
        PACKAGE = "npcp")$pdf
 }
 
-convrect <- function(x, n)
-{
+convrect <- function(x, n) {
     pdfsumunif(x + n/2, n) / pdfsumunif(n / 2, n)
 }
 
-flattop <- function(x, a=0.5)
-{
+flattop <- function(x, a=0.5) {
     pmin( pmax((1-abs(x))/(1-a), 0), 1)
 }
 
@@ -62,8 +57,7 @@ flattop <- function(x, a=0.5)
 
 ## Adapted from Matlab code by A. Patton and the R translation
 ## by C. Parmeter and J. Racine
-mval <- function(rho, lagmax, kn, rho.crit)
-{
+mval <- function(rho, lagmax, kn, rho.crit) {
     ## Compute the number of insignificant runs following each rho(k),
     ## k=1,...,lagmax.
     num.ins <- sapply(1:(lagmax-kn+1),
@@ -75,12 +69,10 @@ mval <- function(rho, lagmax, kn, rho.crit)
     ## Politis and White for further details).
     if(any(num.ins == kn))
         return( which(num.ins == kn)[1] )
-    else
-    {
+    else {
       ## If no runs of length kn are insignificant, take the smallest
       ## value of rho(k) that is significant.
-      if(any(abs(rho) > rho.crit))
-      {
+      if(any(abs(rho) > rho.crit)) {
           lag.sig <- which(abs(rho) > rho.crit)
           k.sig <- length(lag.sig)
 
@@ -102,8 +94,7 @@ mval <- function(rho, lagmax, kn, rho.crit)
   }
 }
 
-Lval <- function(x, method=mean)
-{
+Lval <- function(x, method=mean) {
     n <- nrow(x)
     d <- ncol(x)
 
@@ -113,8 +104,7 @@ Lval <- function(x, method=mean)
     rho.crit <- 1.96 * sqrt(log10(n)/n)
 
     m <- numeric(d)
-    for (i in 1:d)
-    {
+    for (i in 1:d) {
         rho <- acf(x[,i], lag.max = lagmax, type = "correlation",
                    plot = FALSE)$acf[-1]
         m[i] <- mval(rho, lagmax, kn, rho.crit)
@@ -128,8 +118,8 @@ Lval <- function(x, method=mean)
 #################################################################################
 
 bOptEmpProc <- function(x, m=5, weights = c("parzen", "bartlett"),
-                        L.method=c("max","median","mean","min"))
-{
+                        L.method=c("max","median","mean","min")) {
+
     weights <- match.arg(weights)
     L.method <- match.arg(L.method)
     method <- switch(L.method,
@@ -137,11 +127,15 @@ bOptEmpProc <- function(x, m=5, weights = c("parzen", "bartlett"),
                      median = median,
                      mean = mean,
                      max = max)
-    stopifnot(m > 0)
-    stopifnot(is.matrix(x))
+    stopifnot(m > 0L)
+
+    if(!is.matrix(x)) {
+        warning("coercing 'x' to a matrix.")
+        stopifnot(is.matrix(x <- as.matrix(x)))
+    }
     n <- nrow(x)
     d <- ncol(x)
-    U <- apply(x,2,rank)/(n+1)
+    U <- apply(x, 2, rank)/(n + 1)
 
     ## parameters for adapting the approach of Politis and White (2004)
     kn <- max(5, ceiling(log10(n)))
@@ -159,8 +153,8 @@ bOptEmpProc <- function(x, m=5, weights = c("parzen", "bartlett"),
     ## compute gamma.n
     gamma.n <- array(NA, c(ng, ng, 2*lagmax+1))
     for (i in 1:ng)
-        for (j in 1:i)
-        {
+        for (j in 1:i) {
+
             gamma.n[i,j,] <- as.numeric(ccf(apply(ifelse(U <= g[i,],1,0),1,prod),
                                             apply(ifelse(U <= g[j,],1,0),1,prod),
                                             lag.max = lagmax, type = "covariance",
@@ -175,8 +169,7 @@ bOptEmpProc <- function(x, m=5, weights = c("parzen", "bartlett"),
     ## compute K.n and sigma.n for all u, v on the grid
     K.n <- sigma.n <- matrix(0,ng,ng)
     for (i in 1:ng)
-        for (j in 1:ng)
-        {
+        for (j in 1:ng) {
             ft <- flattop(-lagmax:lagmax/L)
             sigma.n[i,j] <- sum(ft * gamma.n[i,j,])
             K.n[i,j] <- sum(ft * (-lagmax:lagmax)^2 * gamma.n[i,j,])
@@ -212,14 +205,18 @@ bOptEmpProc <- function(x, m=5, weights = c("parzen", "bartlett"),
 bOptRho <- function(x,
                     statistic = c("global", "pairwise"),
                     weights = c("parzen", "bartlett"),
-                    L.method = c("pseudo","max","median","mean","min"))
-{
+                    L.method = c("pseudo","max","median","mean","min")) {
+
     statistic <- match.arg(statistic)
     weights <- match.arg(weights)
-    stopifnot(is.matrix(x))
+
+    if(!is.matrix(x)) {
+        warning("coercing 'x' to a matrix.")
+        stopifnot(is.matrix(x <- as.matrix(x)))
+    }
     n <- nrow(x)
     d <- ncol(x)
-    stopifnot(d > 1)
+    stopifnot(d > 1L)
     L.method <- match.arg(L.method)
 
     ## f in natural order
@@ -264,8 +261,8 @@ bOptRho <- function(x,
     ## determine L
     if (L.method == "pseudo")
         L <- Lval(matrix(influ), method=min)
-    else
-    {
+    else {
+
         method <- switch(L.method,
                          min = min,
                          median = median,
@@ -304,13 +301,17 @@ bOptRho <- function(x,
 #################################################################################
 ## Function for estimating b^opt = round( (ln^opt + 1)/ 2)
 ## in the setting of the tests for change-point detection
-## based on U-statistics
+## based the sample mean and on U-statistics
 #################################################################################
 
-bOptU <- function(influ, weights = c("parzen", "bartlett"))
-{
-    weights <- match.arg(weights)
+bOpt <- function(influ, weights = c("parzen", "bartlett")) {
+
+    if(!is.vector(influ, "numeric")) {
+        warning("coercing 'influ' to a numeric.")
+        stopifnot(is.double(influ <- as.double(influ)))
+    }
     n <- length(influ)
+    weights <- match.arg(weights)
 
     ## parameters for adapting the approach of Politis and White (2004)
     kn <- max(5, ceiling(log10(n)))

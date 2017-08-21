@@ -1,22 +1,23 @@
-\name{cpTestFn}
-\alias{cpTestFn}
-\title{Test for change-point detection based on the multivariate
-  empirical distribution function}
+\name{cpDist}
+\alias{cpDist}
+\title{Test for Change-Point Detection in Possibly Multivariate Observations
+  Sensitive to Changes in the Distribution Function}
 \description{
-  Nonparametric test for change-point detection based on the (multivariate)
-  empirical distribution function. The observations can be continuous
-  univariate or
-  multivariate, and serially independent or dependent (strongly mixing).
-  Approximate p-values for the test statistics are obtained by means of a
-  \emph{multiplier} approach. Details can be found in the first reference
-  which treats the serially independent case.
+  Nonparametric test for change-point detection based on the
+  (multivariate) empirical distribution function. The observations can
+  be continuous univariate or multivariate, and serially independent or
+  dependent (strongly mixing).  Approximate p-values for the test
+  statistics are obtained by means of a \emph{multiplier}
+  approach. The first reference treats the serially
+  independent case while details about the serially
+  dependent case can be found in second and third references.
 }
 \usage{
-cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
-         method = c("nonseq", "seq"), b = 1,
-         weights = c("parzen", "bartlett"),
-         m = 5, L.method=c("max","median","mean","min"),
-         N = 1000, init.seq = NULL)
+cpDist(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
+       method = c("nonseq", "seq"), b = NULL,
+       weights = c("parzen", "bartlett"),
+       m = 5, L.method=c("max","median","mean","min"),
+       N = 1000, init.seq = NULL, include.replicates = FALSE)
 }
 \arguments{
   \item{x}{a data matrix whose rows are continuous observations.}
@@ -37,8 +38,8 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
   \item{b}{strictly positive integer specifying the value of the
     bandwidth parameter determining the serial dependence when
     generating dependent multiplier sequences using the 'moving average
-    approach'; see Section 5 of the second reference. The default
-    value is 1, which will create i.i.d. multiplier
+    approach'; see Section 5 of the second reference. The
+    value 1 will create i.i.d. multiplier
     sequences suitable for serially independent observations. If set to
     \code{NULL}, \code{b} will be estimated from \code{x} using the
     function \code{\link{bOptEmpProc}()}; see the procedure described in
@@ -59,6 +60,9 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
  \item{init.seq}{a sequence of independent standard normal variates of
    length \code{N * (nrow(x) + 2 * (b - 1))} used to generate dependent
    multiplier sequences.}
+ \item{include.replicates}{a logical specifying whether the
+   object of \code{\link{class}} \code{htest} returned by the function
+   (see below) will include the multiplier replicates.}
 }
 \details{
   The approximate p-value is computed as
@@ -84,12 +88,18 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
 }
 \references{
   M. Holmes, I. Kojadinovic and J-F. Quessy (2013), Nonparametric tests
-  for change-point detection à la Gombay and Horváth, \emph{Journal of
-    Multivariate Analysis} 115, pages 16-32
+  for change-point detection \enc{à}{a} la Gombay and Horv\enc{á}{a}th,
+  \emph{Journal of Multivariate Analysis} \bold{115}, pages 16-32.
 
-  A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
+  A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, \emph{Bernoulli}, in press, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
+  \url{http://arxiv.org/abs/1306.3930}.
+
+  A. B\enc{ü}{u}cher, J.-D. Fermanian and I. Kojadinovic (2017),
+  Combining cumulative sum change-point detection tests for assessing
+  the stationarity of continuous univariate time series,
+  \url{http://arxiv.org/}.
 }
 \note{
   Note that when the observations are continuous univariate and serially
@@ -98,47 +108,47 @@ cpTestFn(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
   obtained by simulation; see Section 4 in the first reference.
 }
 \seealso{
-  \code{\link{cpTestCn}()} for a related test based on the empirical
-  copula, \code{\link{cpTestRho}()} for a related test based on
-  Spearman's rho, \code{\link{cpTestU}()} for related tests based on
-  U-statistics, \code{\link{bOptEmpProc}()} for the function used to
+  \code{\link{cpCopula}()} for a related test based on the empirical
+  copula, \code{\link{cpRho}()} for a related test based on
+  Spearman's rho, \code{\link{cpTau}()} for a related test based on
+  Kendall's tau, \code{\link{bOptEmpProc}()} for the function used to
   estimate \code{b} from \code{x} if \code{b = NULL}.
 }
 \examples{
-## a univariate example
+## A univariate example
 n <- 100
 k <- 50 ## the true change-point
 y <- rnorm(k)
 z <- rexp(n-k)
 x <- matrix(c(y,z))
-cp <- cpTestFn(x)
+cp <- cpDist(x, b = 1)
 cp
 
-## all statistics
+## All statistics
 cp$all.statistics
-## corresponding p.values
+## Corresponding p.values
 cp$all.p.values
 
-## estimated change-point
+## Estimated change-point
 which(cp$cvm == max(cp$cvm))
 which(cp$ks == max(cp$ks))
 
-## a very artificial trivariate example
+## A very artificial trivariate example
 ## with a break in the first margin
 n <- 100
 k <- 50 ## the true change-point
 y <- rnorm(k)
-z <- rnorm(n-k,mean=2)
-x <- cbind(c(y,z),matrix(rnorm(2*n),n,2))
-cp <- cpTestFn(x)
+z <- rnorm(n-k, mean = 2)
+x <- cbind(c(y,z),matrix(rnorm(2*n), n, 2))
+cp <- cpDist(x, b = 1)
 cp
 
-## all statistics
+## All statistics
 cp$all.statistics
-## corresponding p.values
+## Corresponding p.values
 cp$all.p.values
 
-## estimated change-point
+## Estimated change-point
 which(cp$cvm == max(cp$cvm))
 which(cp$ks == max(cp$ks))
 }

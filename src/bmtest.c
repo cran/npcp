@@ -564,7 +564,7 @@ void grad_g(double *x, int method, int statistic, double *grad)
 
 ***********************************************************************/
 
-void cptestBM(double *X, int *n, int *r, double *stat, double *gamman,
+void cpTestBM(double *X, int *n, int *r, double *stat, double *gamman,
 	      double *deltan, double *gamma, double *delta,
 	      int *meth, int *landwehr, int *noties, int* center,
 	      double *param, double *avar)
@@ -781,7 +781,7 @@ void fitGEV(double *X, int *n, double *gamma, double *delta, int *meth,
 	    break;
 
 	default:
-	    Rprintf("Wrong statistics in cptestBM\n");
+	    Rprintf("Wrong statistics in cpTestBM\n");
 	    return;
 	}
 

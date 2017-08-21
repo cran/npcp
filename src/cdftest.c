@@ -34,7 +34,7 @@
 
 ***********************************************************************/
 
-void cptestF(double *X, int *n, int *d, double *cvm, double *ks, int *M,
+void cpTestF(double *X, int *n, int *d, double *cvm, double *ks, int *M,
 	     int *w, int *bw, int *seq, double *cvm0, double *ks0,
 	     double *initseq)
 {

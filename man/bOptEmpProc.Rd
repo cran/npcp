@@ -1,19 +1,33 @@
 \name{bOptEmpProc}
+\alias{bOpt}
 \alias{bOptEmpProc}
-\title{Bandwidth parameter estimation}
+\title{Bandwidth Parameter Estimation}
 \description{
-  In a particular empirical process setting, estimates the
-  bandwidth parameter controlling the serial dependence when
-  generating dependent multiplier sequences using the 'moving average
-  approach'; see Section 5 of the third reference. This
-  function is called in the functions \code{\link{cpTestFn}()} and
-  \code{\link{cpTestCn}()} if \code{b} is set to \code{NULL}.
+  In the context of the standard CUSUM test based on the sample mean or
+  in a particular empirical process setting, the following functions
+  estimate the bandwidth parameter controlling the serial dependence
+  when generating dependent multiplier sequences using the 'moving
+  average approach'; see Section 5 of the third reference. The function
+  function \code{bOpt()} is called in the functions
+  \code{\link{cpMean}()}, \code{\link{cpVar}()}, \code{\link{cpGini}()},
+  \code{\link{cpAutocov}()}, \code{\link{cpCov}()} and
+  \code{\link{cpTau}()} when \code{b} is set to \code{NULL}.  The
+  function function \code{bOptEmpProc()} is called in the functions
+  \code{\link{cpDist}()}, \code{\link{cpCopula}()},
+  \code{\link{cpAutocop}()} and \code{\link{stDistAutocop}()} when
+  \code{b} is set to \code{NULL}.
 }
 \usage{
+bOpt(influ, weights = c("parzen", "bartlett"))
+
 bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
             L.method=c("max","median","mean","min"))
 }
 \arguments{
+  \item{influ}{a numeric containing the relevant influence coefficients,
+            which, in the case of the standard CUSUM test based on the
+            sample mean, are simply the available observations;
+            see also the last reference.}
   \item{x}{a data matrix whose rows are continuous observations.}
   \item{weights}{a string specifying the kernel for creating the
    weights used in the generation of dependent multiplier sequences within the
@@ -31,8 +45,8 @@ bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
 \details{
   The implemented approach results from an adaptation of the procedure
   described in the first two references (see also the references
-  therein). The use of this function in a context different from that
-  considered in the third reference may not be meaningful.
+  therein). The use of theses functions in a context different from that
+  considered in the third or fourth reference may not be meaningful.
 
   Acknowledgment: Part of the code of the function results from an
   adaptation of R code of C. Parmeter and J. Racine, itself an
@@ -42,19 +56,30 @@ bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
 
 \references{
   D.N. Politis and H. White (2004), Automatic block-length selection for the
-  dependent bootstrap, \emph{Econometric Reviews} 23(1):53–70.
+  dependent bootstrap, \emph{Econometric Reviews} \bold{23(1)}, pages 53-70.
 
   D.N. Politis, H. White and A.J. Patton (2004), Correction: Automatic
   block-length selection for the dependent bootstrap,
-  \emph{Econometric Reviews} 28(4):372-375.
+  \emph{Econometric Reviews} \bold{28(4)}, pages 372-375.
 
-  A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
+  A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, \emph{Bernoulli}, in press, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
+  \url{http://arxiv.org/abs/1306.3930}.
+
+  A. B\enc{ü}{u}cher and I. Kojadinovic (2016), Dependent multiplier
+  bootstraps for non-degenerate U-statistics under mixing conditions
+  with applications, \emph{Journal of Statistical Planning and
+    Inference} \bold{170} pages 83-105, \url{http://arxiv.org/abs/1412.5875}.
+
 }
 %\note{}
 \seealso{
-  \code{\link{cpTestFn}()}, \code{\link{cpTestCn}()}.
+  \code{\link{cpDist}()}, \code{\link{cpCopula}()},
+  \code{\link{cpAutocop}()}, \code{\link{stDistAutocop}()},
+  \code{\link{cpMean}()}, \code{\link{cpVar}()},
+  \code{\link{cpGini}()}, \code{\link{cpAutocov}()},
+  \code{\link{cpCov}()} and \code{\link{cpTau}()}.
 }
 %\examples{}
 

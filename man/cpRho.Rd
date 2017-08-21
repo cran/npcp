@@ -1,6 +1,6 @@
-\name{cpTestRho}
-\alias{cpTestRho}
-\title{Test for change-point detection based on Spearman's rho}
+\name{cpRho}
+\alias{cpRho}
+\title{Test for Change-Point Detection Based on Spearman's Rho}
 \description{
   Nonparametric test for change-point detection particularly sensitive
   to changes in Spearman's rho in multivariate time series. The
@@ -10,10 +10,10 @@
   distribution. Details can be found in first reference.
 }
 \usage{
-cpTestRho(x, method = c("mult", "asym.var"),
-          statistic = c("pairwise", "global"),
-          b = 1, weights = c("parzen", "bartlett"),
-          N = 1000, init.seq = NULL)
+cpRho(x, method = c("mult", "asym.var"),
+      statistic = c("pairwise", "global"),
+      b = NULL, weights = c("parzen", "bartlett"),
+      N = 1000, init.seq = NULL, include.replicates = FALSE)
 }
 \arguments{
   \item{x}{a data matrix whose rows are multivariate continuous
@@ -32,8 +32,8 @@ cpTestRho(x, method = c("mult", "asym.var"),
   \item{b}{strictly positive integer specifying the value of the
     bandwidth parameter determining the serial dependence when
     generating dependent multiplier sequences using the 'moving average
-    approach'; see Section 5 of the second reference. The default
-    value is 1, which will create i.i.d. multiplier
+    approach'; see Section 5 of the second reference. The value 1
+    will create i.i.d. multiplier
     sequences suitable for serially independent observations. If set to
     \code{NULL}, \code{b} will be estimated from \code{x} using the
     procedure described in the first reference.}
@@ -44,6 +44,9 @@ cpTestRho(x, method = c("mult", "asym.var"),
  \item{init.seq}{a sequence of independent standard normal variates of
    length \code{N * (nrow(x) + 2 * (b - 1))} used to generate dependent
    multiplier sequences.}
+ \item{include.replicates}{a logical specifying whether the
+   object of \code{\link{class}} \code{htest} returned by the function
+   (see below) will include the multiplier replicates, if generated.}
 }
 \details{
   When \code{method == "mult"}, the approximate p-value is computed as
@@ -70,23 +73,24 @@ cpTestRho(x, method = c("mult", "asym.var"),
   \item{b}{the value of parameter \code{b}.}
 }
 \references{
-  I. Kojadinovic, J-F. Quessy and T. Rohmer (2014),
+  I. Kojadinovic, J-F. Quessy and T. Rohmer (2016),
   Testing the constancy of Spearman's rho in multivariate time series,
-  \emph{Annals of the Institute of Statistical Mathematics}, in press,
-  \url{http://arxiv.org/abs/1407.1624}.
+  \emph{Annals of the Institute of Statistical Mathematics} \bold{68:5},
+  pages 929-954, \url{http://arxiv.org/abs/1407.1624}.
 
-  A. B\enc{ü}{u}cher and I. Kojadinovic (2014), A dependent multiplier
+  A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
-  mixing, \emph{Bernoulli}, in press, \url{http://arxiv.org/abs/1306.3930}.
+  mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
+  \url{http://arxiv.org/abs/1306.3930}.
 }
 \note{
   These tests were derived under the assumption of continuous margins.
 }
 \seealso{
-  \code{\link{cpTestU}()} for related tests based on
-  U-statistics, \code{\link{cpTestFn}()} for a related test
+  \code{\link{cpTau}()} for a related test based on
+  Kendall's tau, \code{\link{cpDist}()} for a related test
   based on the multivariate
-  empirical c.d.f., \code{\link{cpTestCn}()} for a related test based on
+  empirical d.f., \code{\link{cpCopula}()} for a related test based on
   the empirical copula.
 }
 \examples{
@@ -97,11 +101,10 @@ k <- 50 ## the true change-point
 u <- rCopula(k,gumbelCopula(1.5))
 v <- rCopula(n-k,gumbelCopula(3))
 x <- rbind(u,v)
-cp <- cpTestRho(x)
+cp <- cpRho(x, b = 1)
 cp
-## estimated change-point
-which(cp$rho == max(cp$rho))
-}
+## Estimated change-point
+which(cp$rho == max(cp$rho))}
 }
 \keyword{htest}
 \keyword{multivariate}

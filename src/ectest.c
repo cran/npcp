@@ -24,7 +24,7 @@
 #include "utilities.h"
 
 /////////////////////////////////////////////////////////////////////////
-// EMPIRICAL COPULA TEST
+// EMPIRICAL COPULA TESTS
 /////////////////////////////////////////////////////////////////////////
 
 /***********************************************************************
@@ -260,6 +260,190 @@ void cpTestC(double *X, int *n, int *d, double *cvm, int *M,
     Free(index);
     Free(U);
     Free(V);
+    Free(x);
+    Free(u);
+    Free(v);
+    Free(w);
+    Free(sumk);
+    Free(sumnk);
+    Free(der);
+    Free(influ);
+    Free(multipliers);
+}
+
+/***********************************************************************
+
+ Form h-lagged data
+ in: (n + h - 1) x d
+ out: n x h x d
+ pairwise == 1: only the first and last set of d columns
+
+***********************************************************************/
+
+void lagged(int n, int d, int h, double *in, double *out, int b, int e,
+	    int pairwise)
+{
+    int i, j, l;
+    if (pairwise) {
+	for (i = b; i < e; i++)
+	    for (j = 0; j < d; j++) {
+		/* first set of d columns */
+		out[i + j * n] = in[i + j * (n + h - 1)];
+		/* second set of columns */
+		out[i + (j + d) * n] = in[i + h - 1 + j * (n + h - 1)];
+	    }
+    }
+    else {
+	for (i = b; i < e; i++)
+	    for (l = 0; l < h; l++)
+		for (j = 0; j < d; j++)
+		    out[i + (j + l * d) * n] = in[i + l + j * (n + h - 1)];
+    }
+}
+
+/***********************************************************************
+
+  Change-point tests based on the empirical autocopula
+  bw: set bw to 1 for the iid case
+
+***********************************************************************/
+
+void cpTestAutocop(double *X, int *n, int *d, int *h, double *cvm, int *M,
+		   int *we, int *bw, int *seq, double *cvm0, double *initseq,
+		   int *pairwise)
+{
+    int i, j, k, l, m;
+    int nh = *n - *h + 1; /* first dim of lagged data */
+    int dh; /* second dim of lagged data */
+    if (*pairwise == 1)
+	dh = (*d) * 2; /* only first and last set of d columns */
+    else
+	dh = (*d) * (*h); /* all sets */
+    int *index = Calloc(n, int);
+    double *U = Calloc((*n) * (*d), double); // pseudo-obs depending on k
+    double *Uh = Calloc(nh * dh, double); // lagged pseudo-obs depending on k
+    double *V = Calloc((*n) * (*d), double); // pseudo-obs not depending on k
+    double *Vh = Calloc(nh * dh, double); // lagged pseudo-obs not depending on k
+    double *x = Calloc((*n) * (*d), double);
+    double *u = Calloc(dh, double);
+    double *v = Calloc(dh, double);
+    double *w = Calloc(dh, double);
+    double *sumk = Calloc(nh, double);
+    double *sumnk = Calloc(nh, double);
+    double *der = Calloc(dh, double);
+    double *influ = Calloc(nh * nh, double);
+    double *multipliers = Calloc(nh * (*M), double);
+    double s, diff;
+
+
+    /* generate (dependent) multipliers */
+    gendepmult(nh, *M, *bw, *we, initseq, multipliers);
+
+    /* pseudo-obs in V */
+    for (i = 0; i < (*n) * (*d); i++)
+	x[i] = X[i];
+    makepseudoobs(x, index, *n, *d, 0, *n, V);
+
+    /* form h-lagged pseudo-obs not depending on k */
+    lagged(nh, *d, *h, V, Vh, 0, nh, *pairwise);
+
+    /* compute influence matrix nonseq at every V pseudo-obs */
+    /* does not depend on k */
+    if (*seq == 0)
+	makeinflumat(nh, dh, 0, nh, Vh, Vh, u, v, w, der, influ);
+
+    /* for each possible breakpoint */
+    for (k = 1; k <= nh-1; k++)
+	{
+	    s = (double)k / nh; // lambda_n(0,s)
+
+	    /* compute pseudo-obs U depending on k */
+	    for (i = 0; i < (*n) * (*d); i++)
+		x[i] = X[i];
+	    makepseudoobs(x, index, *n, *d, 0, k + *h - 1, U);
+	    lagged(nh, *d, *h, U, Uh, 0, k, *pairwise);
+	    for (i = 0; i < (*n) * (*d); i++)
+		x[i] = X[i];
+	    makepseudoobs(x, index, *n, *d, k, *n, U);
+	    lagged(nh, *d, *h, U, Uh, k, nh, *pairwise);
+
+	    /* compute influence matrix seq at every V pseudo-obs */
+	    /* does depend on k */
+	    if (*seq == 1)
+		{
+		    makeinflumat(nh, dh, 0, k, Uh, Vh, u, v, w, der, influ);
+		    makeinflumat(nh, dh, k, nh, Uh, Vh, u, v, w, der, influ);
+		}
+
+	    /* compute statistics */
+	    cvm[k - 1] = 0.0;
+	    for (l = 0; l < nh; l++) // at every pseudo-obs Vh
+		{
+		    for (j = 0; j < dh; j++)
+			u[j] = Vh[j * nh + l]; // at pseudo-obs Vh line l
+		    diff = ec(Uh, nh, dh, 0, k, u) - ec(Uh, nh, dh, k, nh, u);
+		    cvm[k - 1] += diff * diff;
+		}
+	    cvm[k - 1] *= nh * s * s * (1.0 - s) * (1.0 - s);
+
+	    /* generate M approximate realizations */
+	    /* if sequential multiplier approach */
+	    if (*seq == 1)
+		for (m = 0; m < *M; m++)
+		    {
+			cvm0[m + (k - 1) * (*M)] = 0.0;
+			for (l = 0; l < nh; l++)  /* for every pseudo-obs Vh */
+			    {
+				sumk[l] = 0.0;
+				for (i = 0; i < k; i++)
+				    sumk[l] += multipliers[i + m * nh]
+					* influ[i + l * nh];
+
+				sumnk[l] = 0.0;
+				for (i = k; i < nh; i++)
+				    sumnk[l] += multipliers[i + m * nh]
+					* influ[i + l * nh];
+
+				diff = (1 - s) * sumk[l] - s * sumnk[l];
+				cvm0[m + (k - 1) * (*M)] += diff * diff;
+			    }
+		    }
+	}
+
+    /* generate M approximate realizations */
+    /* if nonsequential multiplier approach */
+    if (*seq == 0)
+	for (m = 0; m < *M; m++)
+	    {
+		for (l = 0; l < nh; l++)
+		    {
+			sumk[l] = 0.0;
+			sumnk[l] = 0.0;
+			for (i = 0; i < nh; i++)
+			    sumnk[l] += multipliers[i + m * nh]
+				* influ[i + l * nh];
+
+		    }
+		for (k = 1; k <= nh-1; k++)
+		    {
+			s = (double)k / nh;
+			cvm0[m + (k - 1) * (*M)] = 0.0;
+			for (l = 0; l < nh; l++)  /* for every pseudo-obs Vh */
+			    {
+				sumk[l] += multipliers[k - 1 + m * nh]
+				    * influ[k - 1 + l * nh];
+
+				diff = sumk[l] - s * sumnk[l];
+				cvm0[m + (k - 1) * (*M)] += diff * diff;
+			    }
+		    }
+	    }
+
+    Free(index);
+    Free(U);
+    Free(Uh);
+    Free(V);
+    Free(Vh);
     Free(x);
     Free(u);
     Free(v);
