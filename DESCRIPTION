@@ -2,8 +2,8 @@ Package: npcp
 Type: Package
 Title: Some Nonparametric CUSUM Tests for Change-Point Detection in
         Possibly Multivariate Observations
-Version: 0.1-7
-Date: 2017-08-21
+Version: 0.1-9
+Date: 2017-08-23
 Author: Ivan Kojadinovic
 Maintainer: Ivan Kojadinovic <ivan.kojadinovic@univ-pau.fr>
 Imports: stats
@@ -23,6 +23,6 @@ License: GPL (>= 3) | file LICENCE
 LazyLoad: yes
 Encoding: UTF-8
 NeedsCompilation: yes
-Packaged: 2017-08-21 14:58:56 UTC; ikojadin
+Packaged: 2017-08-23 15:17:24 UTC; ikojadin
 Repository: CRAN
-Date/Publication: 2017-08-21 15:38:21 UTC
+Date/Publication: 2017-08-23 20:55:49 UTC

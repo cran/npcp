@@ -21,12 +21,11 @@
 
 /**
  * @file   set_utils.c
- * @author Michel Grabisch and Ivan Kojadinovic 
  * @date   May 2007
- * 
- * @brief  Set function utilities adapted from the R package kappalab
- * 
- * 
+ *
+ * @brief  Set function utilities written while working on package kappalab
+ *
+ *
  */
 
 #include <R.h>
@@ -34,12 +33,11 @@
 
 #include "set_utils.h"
 
-/** 
+/**
  * Set cardinality of n
- * 
+ *
  * @param n integer representing a set; uses binary notation
  * @return the number of bits in n equal to 1
- * @author Michel Grabisch and Ivan Kojadinovic 
  */
 int card(int n) {
   int i;
@@ -48,13 +46,12 @@ int card(int n) {
   return(i);
 }
 
-/** 
+/**
  * Computes sum_{i=0}^k choose(n,i)
- * 
- * @param n 
- * @param k 
+ *
+ * @param n
+ * @param k
  * @return sum_{i=0}^k choose(n,i)
- * @author Michel Grabisch and Ivan Kojadinovic 
  */
 double sum_binom(int n, int k) {
   double s = 1.;
@@ -63,18 +60,17 @@ double sum_binom(int n, int k) {
   return s;
 }
 
-/** 
+/**
  * Generation of the first k + 1 levels of the power set of X
- * in the "natural" order. Recursive function.  
- * 
+ * in the "natural" order. Recursive function.
+ *
  * @param n cardinality of X
- * @param k 
- * @param last 
- * @param power_set 
- * @param b 
- * @author Michel Grabisch and Ivan Kojadinovic  
+ * @param k
+ * @param last
+ * @param power_set
+ * @param b
  */
-static 
+static
 void k_power_set_rec(int n, int k, int last, int *power_set, int *b) {
   /* look for the leftmost 1 in b and start to fill blank cases
      with 1 left from this position */
@@ -96,14 +92,13 @@ void k_power_set_rec(int n, int k, int last, int *power_set, int *b) {
     k_power_set_rec(n, k, last, power_set, b+1);
 }
 
-/** 
+/**
  * Generation of the first k + 1 levels of the power set of X
  * in the "natural" order. Wrapps the previous function.
- * 
+ *
  * @param n cardinality of X
- * @param k 
+ * @param k
  * @param power_set contains the k + 1 levels of the power set of X
- * @author Michel Grabisch and Ivan Kojadinovic 
  */
 void k_power_set(int *n, int *k, int *power_set) {
   power_set[0] = 0;
@@ -111,13 +106,12 @@ void k_power_set(int *n, int *k, int *power_set) {
 }
 
 
-/** 
+/**
  * Converts an integer representing a set into an array ("list of elements")
- * 
+ *
  * @param n cardinality of X
  * @param b binary code to be converted
  * @param x result in an array (ordered liste of elements)
- * @author Michel Grabisch and Ivan Kojadinovic 
  */
 static void binary2subset(int n, int b, int *x) {
   for(int i=0; i<n; i++)
@@ -133,15 +127,14 @@ static void binary2subset(int n, int b, int *x) {
  */
 #define SET_MAX 4
 
-/** 
+/**
  * Converts the k power set of X in the "natural" order to char**
  * Function is suboptimal, partly because of SET_MAX
  *
  * @param n cardinality of X
  * @param sb the length of k_power_set
  * @param k_power_set array representing the k power set of X
- * @param subset converted k power set 
- * @author Michel Grabisch and Ivan Kojadinovic  
+ * @param subset converted k power set
  */
 void k_power_set_char(int *n, int *sb, int *k_power_set, char **subset) {
 
@@ -169,14 +162,13 @@ void k_power_set_char(int *n, int *sb, int *k_power_set, char **subset) {
   }
 }
 
-/** 
+/**
  * Writes a set function given in "natural" order in the binary order
- * 
+ *
  * @param n cardinality of X
  * @param sf array representing the set function in "natural" order
  * @param power_set contains the power_set of X in "natural" order
  * @param sf_out array representing the set function in binary order
- * @author Michel Grabisch and Ivan Kojadinovic  
  */
 void natural2binary(int *n, double *sf, int *power_set, double *sf_out) {
   for(int i=0; i<(1<<*n); i++)

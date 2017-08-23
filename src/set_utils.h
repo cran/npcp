@@ -25,11 +25,9 @@
 
 /**
  * @file   set_utils.h
- * @author Michel Grabisch and Ivan Kojadinovic
  * @date   May 2007
  *
- * @brief  Set function utilities adapted from the R package kappalab
- *
+ * @brief  Set function utilities written while working on package kappalab
  *
  */
 

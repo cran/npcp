@@ -42,6 +42,7 @@ void cpTestAutocop(double *X, int *n, int *d, int *h, double *cvm, int *M,
 // ./set_utils.c ///////////////////////////////////////////////////////////////
 
 void k_power_set(int *n, int *k, int *power_set);
+
 void natural2binary(int *n, double *sf, int *power_set, double *sf_out);
 
 // ./rhotest.c ///////////////////////////////////////////////////////////////////
@@ -49,6 +50,8 @@ void natural2binary(int *n, double *sf, int *power_set, double *sf_out);
 void cpTestRho(double *X, int *n, int *d, double *rho, double *fbin,
 	       double *influ, int *influest, int *M, int *w, int *bw,
 	       int *method, double *rho0, double *avar, double *initseq);
+
+void influRho(double *X, int *n, int *d, double *fbin, double *influ);
 
 // ./meantest.c ///////////////////////////////////////////////////////////////////
 
@@ -71,5 +74,11 @@ void cpTestBM(double *X, int *n, int *r, double *stat, double *gamman,
 
 void fitGEV(double *X, int *n, double *gamma, double *delta, int *meth,
 	    int *landwehr, int *noties, double *param, double *avar);
+
+// ./utilities.c ///////////////////////////////////////////////////////////////////
+
+void pdf_sum_unif(int *n, double *y, int *ny, double *pdfy);
+
+
 
 #endif

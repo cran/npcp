@@ -319,7 +319,7 @@ void cpTestAutocop(double *X, int *n, int *d, int *h, double *cvm, int *M,
 	dh = (*d) * 2; /* only first and last set of d columns */
     else
 	dh = (*d) * (*h); /* all sets */
-    int *index = Calloc(n, int);
+    int *index = Calloc(*n, int);
     double *U = Calloc((*n) * (*d), double); // pseudo-obs depending on k
     double *Uh = Calloc(nh * dh, double); // lagged pseudo-obs depending on k
     double *V = Calloc((*n) * (*d), double); // pseudo-obs not depending on k
@@ -334,7 +334,6 @@ void cpTestAutocop(double *X, int *n, int *d, int *h, double *cvm, int *M,
     double *influ = Calloc(nh * nh, double);
     double *multipliers = Calloc(nh * (*M), double);
     double s, diff;
-
 
     /* generate (dependent) multipliers */
     gendepmult(nh, *M, *bw, *we, initseq, multipliers);

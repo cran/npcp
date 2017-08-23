@@ -19,16 +19,17 @@
   ##
   #################################################################################*/
 
+/* 
+   Automatic generation from Dev/
+   tools::package_native_routine_registration_skeleton('npcp',,,FALSE)
+*/
+
 #include <R.h>
 #include <Rinternals.h>
+#include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
 
 #include "npcp.h"
-
-#define CDEF(name)  {#name, (DL_FUNC) &name, sizeof(name ## _t)/sizeof(name ## _t[0]), name ##_t}
-
-#define CALLDEF(name, n)  {#name, (DL_FUNC) &name, n}
-
 
 // ./cdftest.c ///////////////////////////////////////////////////////////////////
 
@@ -40,7 +41,7 @@ static R_NativePrimitiveArgType cpTestF_t[] = {
 // ./ectest.c ///////////////////////////////////////////////////////////////////
 
 static R_NativePrimitiveArgType cpTestC_t[] = {
-    REALSXP, INTSXP, INTSXP, REALSXP, INTSXP, INTSXP, INTSXP, REALSXP, REALSXP,
+    REALSXP, INTSXP, INTSXP, REALSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP, REALSXP,
 };
 static R_NativePrimitiveArgType cpTestAutocop_t[] = {
     REALSXP, INTSXP, INTSXP, INTSXP, REALSXP, INTSXP, INTSXP, INTSXP, INTSXP,
@@ -63,6 +64,10 @@ static R_NativePrimitiveArgType cpTestRho_t[] = {
     INTSXP, INTSXP, REALSXP, REALSXP, REALSXP
 };
 
+static R_NativePrimitiveArgType influRho_t[] = {
+    REALSXP, INTSXP, INTSXP, REALSXP, REALSXP
+};
+
 // ./meantest.c ///////////////////////////////////////////////////////////////////
 
 static R_NativePrimitiveArgType cpTestMean_t[] = {
@@ -83,50 +88,49 @@ static R_NativePrimitiveArgType cpTestBM_t[] = {
     REALSXP, INTSXP, INTSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, INTSXP,
     INTSXP, INTSXP, INTSXP, REALSXP, REALSXP
 };
+
 static R_NativePrimitiveArgType fitGEV_t[] = {
     REALSXP, INTSXP, REALSXP, REALSXP, INTSXP, INTSXP, INTSXP, REALSXP, REALSXP
 };
 
+// ./utilities.c ///////////////////////////////////////////////////////////////////
 
-static const R_CMethodDef CEntries[]  = {
-    CDEF(cpTestF),
+static R_NativePrimitiveArgType pdf_sum_unif_t[] = {
+    INTSXP, REALSXP, INTSXP, REALSXP
+};
 
-    CDEF(cpTestC),
-    CDEF(cpTestAutocop),
+static const R_CMethodDef CEntries[] = {
 
-    CDEF(k_power_set),
-    CDEF(natural2binary),
+    {"cpTestAutocop",  (DL_FUNC) &cpTestAutocop,  12, cpTestAutocop_t},
 
-    CDEF(cpTestRho),
+    {"cpTestBM",       (DL_FUNC) &cpTestBM,       14, cpTestBM_t},
 
-    CDEF(cpTestMean),
+    {"cpTestC",        (DL_FUNC) &cpTestC,        10, cpTestC_t},
 
-    CDEF(cpTestU),
+    {"cpTestF",        (DL_FUNC) &cpTestF,        12, cpTestF_t},
 
-    CDEF(cpTestBM),
-    CDEF(fitGEV),
+    {"cpTestMean",     (DL_FUNC) &cpTestMean,     10, cpTestMean_t},
+
+    {"cpTestRho",      (DL_FUNC) &cpTestRho,      14, cpTestRho_t},
+
+    {"cpTestU",        (DL_FUNC) &cpTestU,        11, cpTestU_t},
+
+    {"fitGEV",         (DL_FUNC) &fitGEV,          9, fitGEV_t},
+
+    {"influRho",       (DL_FUNC) &influRho,        5, influRho_t},
+
+    {"k_power_set",    (DL_FUNC) &k_power_set,     3, k_power_set_t},
+
+    {"natural2binary", (DL_FUNC) &natural2binary,  4, natural2binary_t},
+
+    {"pdf_sum_unif",   (DL_FUNC) &pdf_sum_unif,    4, pdf_sum_unif_t},
 
     {NULL, NULL, 0}
 };
 
-static R_CallMethodDef CallEntries[] = {
-
-    //CALLDEF(rF01Frank_vec_c, 5),
-
-    {NULL, NULL, 0}
-};
-
-/**
- * register routines
- * @param dll pointer
- * @return none
- * @author Martin Maechler
- */
-void
-#ifdef HAVE_VISIBILITY_ATTRIBUTE
-__attribute__ ((visibility ("default")))
-#endif
-R_init_copula(DllInfo *dll) {
-    R_registerRoutines(dll, CEntries, CallEntries, NULL, NULL);
+void R_init_npcp(DllInfo *dll)
+{
+    R_registerRoutines(dll, CEntries, NULL, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
+

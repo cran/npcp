@@ -46,7 +46,7 @@ stDistAutocop(x, lag = 1, b = NULL, pairwise = FALSE,
   some of the components of which are
   \item{statistic}{value of the test statistic.}
   \item{p.value}{corresponding approximate p-value \enc{à}{a} Fisher.}
-  \item{component.p.values}{p-values of the component tests arising the combination.}
+  \item{component.p.values}{p-values of the component tests arising in the combination.}
   \item{b}{the value of parameter \code{b}.}
 }
 \references{
