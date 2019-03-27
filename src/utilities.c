@@ -172,7 +172,7 @@ void gendepmult(int n, int M, int bw, int w, double *initseq, double *multiplier
 	{
 	    norm = sqrt(3.0 * R_pow_di(bw, 3) / (2.0 * R_pow_di(bw, 2) + 1.0));
 	    for (j = -(bw - 1); j <= bw - 1; j++)
-		weights[j + bw - 1] = (1.0 - fabs(j) / bw) / bw * norm;
+		weights[j + bw - 1] = (1.0 - abs(j) / bw) / bw * norm;
 	}
     else /* Parzen weights */
 	{

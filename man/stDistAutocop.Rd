@@ -34,7 +34,7 @@ stDistAutocop(x, lag = 1, b = NULL, pairwise = FALSE,
    'moving average approach'; see Section 5 of the second reference.}
   \item{m}{a strictly positive integer specifying the number of points of the
    uniform grid on \eqn{(0,1)}{(0,1)} involved in the estimation of the bandwidth
-   parameter; see Section 5 of the third reference. }
+   parameter; see Section 5 of the second reference. }
  \item{N}{number of multiplier replications.}
 }
 \details{

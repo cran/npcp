@@ -406,3 +406,34 @@ cpSerialRho <- function(x, method = c("mult", "asym.var"),
                    data.name = deparse(substitute(x))))
 }
 
+#################################################################################
+##  Stationarity test based on cpDist on lagged time-series
+#################################################################################
+
+stDist <- function(x, method = c("nonseq", "seq"),
+                   lag = 1, b = NULL, weights = c("parzen", "bartlett"),
+                   N = 1000, init.seq = NULL) {
+
+    method <- match.arg(method)
+    weights <- match.arg(weights)
+    stopifnot((lag <- as.integer(lag)) >= 1L)
+    h <- lag + 1
+
+    if(!is.matrix(x)) {
+        warning("coercing 'x' to a matrix.")
+        stopifnot(is.matrix(x <- as.matrix(x)))
+    }
+    n <- nrow(x)
+    d <- ncol(x)
+    ## form lagged data
+    y <- lagged(n-h+1, d, h, x)
+    res <- cpDist(y, method = method,
+                  b = b, weights = weights, N = N, init.seq = init.seq)
+
+    structure(class = "htest",
+              list(method = sprintf("Test of change-point detection based on the serial version of empirical distribution function with 'method'=\"%s\" and 'h'=\"%s\"", method, h),
+                   statistic = res$statistic,
+                   p.value = res$p.value,
+                   b = res$b, h = h,
+                   data.name = deparse(substitute(y))))
+}

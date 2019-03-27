@@ -31,10 +31,10 @@ cpAutocop(x, lag = 1, b = NULL, bivariate = FALSE,
    'moving average approach'; see Section 5 of the second reference.}
   \item{m}{a strictly positive integer specifying the number of points of the
    uniform grid on \eqn{(0,1)}{(0,1)} involved in the estimation of the bandwidth
-   parameter; see Section 5 of the third reference. }
+   parameter; see Section 5 of the second reference. }
  \item{N}{number of multiplier replications.}
  \item{init.seq}{a sequence of independent standard normal variates of
-   length \code{N * (nrow(x) + 2 * (b - 1))} used to generate dependent
+   length \code{N * (nrow(x) - lag  + 2 * (b - 1))} used to generate dependent
    multiplier sequences.}
  \item{include.replicates}{a logical specifying whether the
    object of \code{\link{class}} \code{htest} returned by the function
