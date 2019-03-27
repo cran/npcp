@@ -1,4 +1,4 @@
-181c974f5a6fb952babefad5f4d85b9f *DESCRIPTION
+a0be2e840a8be79c8ab8d223aaa8fc8f *DESCRIPTION
 782777ce4dd11654694f51c3680be405 *LICENCE
 b3698fd4cd509ffb3e721c342401f219 *NAMESPACE
 936484f38a168657b5b7bdc4ea92c3a9 *R/ci.R
@@ -24,5 +24,5 @@ defc0001cb52b291d8b22c0a69efe3bb *src/npcp.h
 b77f7935058331cd15a1ef8a9b99116f *src/rhotest.c
 0ddb686a07503546dd9c2ed9d422075c *src/set_utils.c
 9937a6e8e7c67a44c718197ff0d2456c *src/set_utils.h
-f035870fd485d5c6815e4e296afa351a *src/utilities.c
+4193bdf760b97942560c384f42ceb9b6 *src/utilities.c
 4668eb0b231abe71d6610a8a63daa5bb *src/utilities.h
