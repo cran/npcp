@@ -24,7 +24,7 @@
 #include "utilities.h"
 
 /////////////////////////////////////////////////////////////////////////
-// EMPIRICAL CDF TEST
+// CHANGE-POINT TEST BASED ON EMPIRICAL CDFS
 /////////////////////////////////////////////////////////////////////////
 
 /***********************************************************************
@@ -34,8 +34,8 @@
 
 ***********************************************************************/
 
-void cpTestF(double *X, int *n, int *d, double *cvm, double *ks, int *M,
-	     int *w, int *bw, int *seq, double *cvm0, double *ks0,
+void cpTestF(double *X, int *n, int *d, double *cvm, double *ks,
+	     int *M, int *w, int *bw, int *seq, double *cvm0, double *ks0,
 	     double *initseq)
 {
 
@@ -87,7 +87,7 @@ void cpTestF(double *X, int *n, int *d, double *cvm, double *ks, int *M,
 		}
 	}
 
-    /* generate N approximate realizations */
+    /* generate M approximate realizations */
     for (j = 0; j < *M; j++)
 	{
 	    /* realization number j */
@@ -131,7 +131,7 @@ void cpTestF(double *X, int *n, int *d, double *cvm, double *ks, int *M,
 			    else
 				procq = ((1 - t) * (sumk[q] - multk * ecdf[q])
 					 - t * (sumnk[q] -  multnk * ecdf[q])) / sqrtn;
-			    cvm0[j + (k-1) * (*M)] += procq * procq;
+			    cvm0[j + (k-1) * (*M)] += procq * procq; /* FIXME: missing division by n */
 			    if (fabs(procq) > ks0[j + (k-1) * (*M)])
 				ks0[j + (k-1) * (*M)] = fabs(procq);
 			}

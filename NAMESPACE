@@ -1,9 +1,10 @@
 useDynLib(npcp)
-importFrom("stats", "acf", "ccf", "median", "rnorm", "qnorm")
-#importFrom("numDeriv", hessian)
-export(cpDist) #cpTestFn
-export(cpCopula) #cpTestCn
-export(cpRho) #cpTestRho
+importFrom("stats", "acf", "ccf", "median", "rnorm", "qnorm", "quantile", "runif")
+importFrom("graphics", "legend", "plot", "points")
+##importFrom("numDeriv", hessian)
+export(cpDist)
+export(cpCopula)
+export(cpRho)
 
 ## .cpTestU
 export(cpMean)
@@ -29,3 +30,9 @@ export(stDistAutocop)
 # export(cpSerialFn)
 # export(cpSerialTau)
 # export(cpSerialRho)
+
+## sequential tests
+export(detCpDist)
+export(simCpDist)
+export(threshCpDist)
+export(monCpDist)

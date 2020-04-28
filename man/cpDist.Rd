@@ -14,8 +14,8 @@
 }
 \usage{
 cpDist(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
-       method = c("nonseq", "seq"), b = NULL,
-       weights = c("parzen", "bartlett"),
+       method = c("nonseq", "seq"), b = NULL, gamma = 0,
+       delta = 1e-4, weights = c("parzen", "bartlett"),
        m = 5, L.method=c("max","median","mean","min"),
        N = 1000, init.seq = NULL, include.replicates = FALSE)
 }
@@ -44,6 +44,10 @@ cpDist(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
     \code{NULL}, \code{b} will be estimated from \code{x} using the
     function \code{\link{bOptEmpProc}()}; see the procedure described in
     Section 5 of the second reference.}
+  \item{gamma}{parameter between 0 and 0.5 appearing in the definition
+    of the weight function used in the detector function.}
+  \item{delta}{parameter between 0 and 1 appearing in the definition
+    of the weight function used in the detector function.}
  \item{weights}{a string specifying the kernel for creating the
    weights used in the generation of dependent multiplier sequences within the
    'moving average approach'; see Section 5 of the second reference.}
@@ -96,10 +100,11 @@ cpDist(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
   mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
   \url{http://arxiv.org/abs/1306.3930}.
 
-  A. B\enc{ü}{u}cher, J.-D. Fermanian and I. Kojadinovic (2017),
+   A. B\enc{ü}{u}cher, J.-D. Fermanian and I. Kojadinovic (2019),
   Combining cumulative sum change-point detection tests for assessing
-  the stationarity of continuous univariate time series,
-  \url{http://arxiv.org/}.
+  the stationarity of univariate time series, \emph{Journal of Time
+  Series Analysis} \bold{40}, pages 124-150,
+  \url{http://arxiv.org/abs/1709.02673}.
 }
 \note{
   Note that when the observations are continuous univariate and serially
@@ -112,7 +117,8 @@ cpDist(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
   copula, \code{\link{cpRho}()} for a related test based on
   Spearman's rho, \code{\link{cpTau}()} for a related test based on
   Kendall's tau, \code{\link{bOptEmpProc}()} for the function used to
-  estimate \code{b} from \code{x} if \code{b = NULL}.
+  estimate \code{b} from \code{x} if \code{b = NULL},
+  \code{\link{seqCpDist}} for the corresponding sequential test.
 }
 \examples{
 ## A univariate example

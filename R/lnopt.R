@@ -32,7 +32,7 @@ parzen <- function(x) {
            ifelse(1/2 <= abs(x) & abs(x) <= 1, 2 * (1 - abs(x))^3, 0))
 }
 
-pdfsumunif <- function(x,n) {
+pdfsumunif <- function(x, n) {
     nx <- length(x)
 
     .C("pdf_sum_unif",
@@ -94,7 +94,7 @@ mval <- function(rho, lagmax, kn, rho.crit) {
   }
 }
 
-Lval <- function(x, method=mean) {
+Lval <- function(x, method = mean) {
     n <- nrow(x)
     d <- ncol(x)
 
@@ -117,8 +117,8 @@ Lval <- function(x, method=mean) {
 ## in a particular empirical process setting
 #################################################################################
 
-bOptEmpProc <- function(x, m=5, weights = c("parzen", "bartlett"),
-                        L.method=c("max","median","mean","min")) {
+bOptEmpProc <- function(x, m = 5, weights = c("parzen", "bartlett"),
+                        L.method = c("max","median","mean","min")) {
 
     weights <- match.arg(weights)
     L.method <- match.arg(L.method)

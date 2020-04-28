@@ -25,7 +25,7 @@
 
 cpDist <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
                    method = c("nonseq", "seq"), b = NULL,
-                   weights = c("parzen", "bartlett"),
+                   gamma = 0, delta = 1e-4, weights = c("parzen", "bartlett"),
                    m = 5, L.method = c("max","median","mean","min"),
                    N = 1000, init.seq = NULL, include.replicates = FALSE) {
 
@@ -33,6 +33,10 @@ cpDist <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
     method <- match.arg(method)
     weights <- match.arg(weights)
     L.method <- match.arg(L.method)
+
+    ## Power and constant in weight function
+    stopifnot(gamma >= 0 && gamma <= 0.5)
+    stopifnot(delta >= 0 && delta <= 1)
 
     if(!is.matrix(x)) {
         warning("coercing 'x' to a matrix.")
@@ -70,15 +74,21 @@ cpDist <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
               as.double(init.seq),
               PACKAGE = "npcp")
 
-    ## for CVM statistics
-    cvm <- out$cvm
-    cvm0 <- matrix(out$cvm0,N,npb)
+    ## Weights
+    s <- seq_len(npb) / n
+    w <- 1 / pmax((s * (1-s))^gamma, delta)
+    w.mat <- matrix(w, N, npb, byrow = TRUE)
 
-    ## for KS statistics
-    ks <- out$ks
-    ks0 <- matrix(out$ks0,N,npb)
+    ## Weighted (replicates of) CVM statistics
+    cvm <- w * out$cvm
+    cvm0 <- w.mat * matrix(out$cvm0, N, npb)
+
+    ## Weighted (replicates of KS) statistics
+    ks <- w * out$ks
+    ks0 <- w.mat * matrix(out$ks0, N, npb)
 
     pval <- function(s0, s) ( sum( s0 >= s ) + 0.5 ) / (N + 1)
+
 
     statistics <- c(cvmmax = max(cvm), cvmmean = sum(cvm)/n,
                     ksmax = max(ks), ksmean = sum(ks)/n)
@@ -100,6 +110,7 @@ cpDist <- function(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
                    cvm = c(cvm=cvm), ks = c(ks=ks),
                    all.statistics = statistics,
                    all.p.values = p.values, b = c(b=b),
+                   gamma = gamma, delta = delta,
                    all.replicates = if (include.replicates) replicates else NULL,
                    replicates = if (include.replicates) replicates[,statistic] else NULL,
                    data.name = deparse(substitute(x))))
@@ -375,9 +386,9 @@ cpMean <- function(x, method = c("nonseq", "seq", "asym.var"),
     }
     else {
         if (!(out$avar > .Machine$double.eps)) { ## OK?
-            cat("b =",b,"\n")
-            cat("x",x,"\n")
-            stop("The asymptotic variance is numerically equal to zero.")
+            cat("b =", b, "\n")
+            cat("x", x, "\n")
+            stop("The asymptotic variance is numerically equal to zero")
         }
         else {
             #if (n <= 100)

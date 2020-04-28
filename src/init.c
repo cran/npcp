@@ -19,7 +19,7 @@
   ##
   #################################################################################*/
 
-/* 
+/*
    Automatic generation from Dev/
    tools::package_native_routine_registration_skeleton('npcp',,,FALSE)
 */
@@ -30,6 +30,33 @@
 #include <R_ext/Rdynload.h>
 
 #include "npcp.h"
+
+// ./seqcdftest.c ///////////////////////////////////////////////////////////////////
+
+static R_NativePrimitiveArgType seqCpDistStat_t[] = {
+    REALSXP, INTSXP, INTSXP, INTSXP, REALSXP, REALSXP, REALSXP, REALSXP,
+    REALSXP, REALSXP,  REALSXP, INTSXP, INTSXP
+};
+
+static R_NativePrimitiveArgType seqCpDistMultSeq1_t[] = {
+    REALSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP,
+    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP
+};
+
+static R_NativePrimitiveArgType seqCpDistMultSeq2_t[] = {
+    REALSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP,
+    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP
+};
+
+static R_NativePrimitiveArgType seqCpDistMultNonSeq_t[] = {
+    REALSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP,
+    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP
+};
+
+
+static R_NativePrimitiveArgType rBetaCopula_t[] = {
+    INTSXP, INTSXP, INTSXP, INTSXP, REALSXP
+};
 
 // ./cdftest.c ///////////////////////////////////////////////////////////////////
 
@@ -100,6 +127,16 @@ static R_NativePrimitiveArgType pdf_sum_unif_t[] = {
 };
 
 static const R_CMethodDef CEntries[] = {
+
+    {"seqCpDistStat",       (DL_FUNC) &seqCpDistStat,       13, seqCpDistStat_t},
+
+    {"seqCpDistMultSeq1",   (DL_FUNC) &seqCpDistMultSeq1,   15, seqCpDistMultSeq1_t},
+
+    {"seqCpDistMultSeq2",   (DL_FUNC) &seqCpDistMultSeq2,   15, seqCpDistMultSeq2_t},
+
+    {"seqCpDistMultNonSeq", (DL_FUNC) &seqCpDistMultNonSeq, 15, seqCpDistMultNonSeq_t},
+
+    {"rBetaCopula",    (DL_FUNC) &rBetaCopula,     5, rBetaCopula_t},
 
     {"cpTestAutocop",  (DL_FUNC) &cpTestAutocop,  12, cpTestAutocop_t},
 

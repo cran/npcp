@@ -24,6 +24,29 @@
 
 #include <R.h>
 
+// ./seqcdftest.c ///////////////////////////////////////////////////////////////////
+
+void seqCpDistStat(double *Y, int *m, int *n, int *d, double *mac,
+		   double *mmc, double *mmk, double *mc, double *mk,
+		   double *gamma, double *delta, int *wmc, int *wmk);
+
+void seqCpDistMultSeq1(double *X, int *m, int *n, int *d, int *B, int *w,
+		       int *bw, double *mac0, double *mmc0, double *mmk0,
+		       double *mc0, double *mk0, double *gamma, 
+		       double *delta, double *initseq);
+
+void seqCpDistMultSeq2(double *X, int *m, int *n, int *d, int *B, int *w,
+		       int *bw, double *mac0, double *mmc0, double *mmk0,
+		       double *mc0, double *mk0, double *gamma,
+		       double *delta, double *initseq);
+
+void seqCpDistMultNonSeq(double *X, int *m, int *n, int *d, int *B,
+			 int *w, int *bw, double *mac0, double *mmc0,
+			 double *mmk0, double *mc0, double *mk0,
+			 double *gamma, double *delta, double *initseq);
+
+void rBetaCopula(int *r, int *m, int *d, int *n, double *x);
+
 // ./cdftest.c ///////////////////////////////////////////////////////////////////
 
 void cpTestF(double *X, int *n, int *d, double *cvm, double *ks, int *M,

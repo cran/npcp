@@ -50,10 +50,11 @@ stDistAutocop(x, lag = 1, b = NULL, pairwise = FALSE,
   \item{b}{the value of parameter \code{b}.}
 }
 \references{
-  A. B\enc{ü}{u}cher, J.-D. Fermanian and I. Kojadinovic (2017),
+  A. B\enc{ü}{u}cher, J.-D. Fermanian and I. Kojadinovic (2019),
   Combining cumulative sum change-point detection tests for assessing
-  the stationarity of continuous univariate time series,
-  \url{http://arxiv.org/}.
+  the stationarity of univariate time series, \emph{Journal of Time
+  Series Analysis} \bold{40}, pages 124-150,
+  \url{http://arxiv.org/abs/1709.02673}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
@@ -61,7 +62,7 @@ stDistAutocop(x, lag = 1, b = NULL, pairwise = FALSE,
   \url{http://arxiv.org/abs/1306.3930}.
 }
 \note{
-  This is a tests for a continuous multivariate time series.
+  This is a test for continuous univariate time series.
 }
 \seealso{
   see \code{\link{cpDist}()} and \code{\link{cpAutocop}()} for the
