@@ -306,8 +306,8 @@ bOptRho <- function(x,
 
 bOpt <- function(influ, weights = c("parzen", "bartlett")) {
 
-    if(!is.vector(influ, "numeric")) {
-        warning("coercing 'influ' to a numeric.")
+    if(!is.double(influ)) {
+        warning("coercing 'influ' to a double.")
         stopifnot(is.double(influ <- as.double(influ)))
     }
     n <- length(influ)

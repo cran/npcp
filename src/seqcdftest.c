@@ -38,7 +38,8 @@
 /* Statistcs / detectors */
 void seqCpDistStat(double *Y, int *m, int *n, int *d, double *mac,
 		   double *mmc, double *mmk, double *mc, double *mk,
-		   double *gamma, double *delta, int *wmc, int *wmk)
+		   double *gamma, double *delta, int *wmc, int *wmk,
+		   int *scale)
 {
 
     int i, j, k, l;
@@ -108,6 +109,7 @@ void seqCpDistStat(double *Y, int *m, int *n, int *d, double *mac,
 			}
 		    d3k += proc2;
 		}
+
 	    mmk[k - *m - 1] = d1k / f;
 	    mmc[k - *m - 1] = d2k / (f * f);
 	    mac[k - *m - 1] = d3k / (f * f * (*m));
@@ -137,7 +139,7 @@ void seqCpDistStat(double *Y, int *m, int *n, int *d, double *mac,
 void seqCpDistMultSeq1(double *X, int *m, int *n, int *d, int *B, int *w,
 		       int *bw, double *mac0, double *mmc0, double *mmk0,
 		       double *mc0, double *mk0, double *gamma,
-		       double *delta, double *initseq)
+		       double *delta, double *initseq, int *scale)
 {
     int i, j, k, l, b;
     int *I = Calloc((*m) * (*m), int); /* indicators m x m */
@@ -267,7 +269,7 @@ void seqCpDistMultSeq1(double *X, int *m, int *n, int *d, int *B, int *w,
 void seqCpDistMultSeq2(double *X, int *m, int *n, int *d, int *B, int *w,
 		       int *bw, double *mac0, double *mmc0, double *mmk0,
 		       double *mc0, double *mk0, double *gamma,
-		       double *delta, double *initseq)
+		       double *delta, double *initseq, int *scale)
 {
     int i, j, k, l, b;
     int *I = Calloc((*m) * (*m), int); /* indicators m x m */
@@ -346,17 +348,9 @@ void seqCpDistMultSeq2(double *X, int *m, int *n, int *d, int *B, int *w,
 			    proc2 = 0.0;
 			    for (l = 0; l < k; l++)
 				{
-				    term = ((k - j)
-					    * (sumb[j - mm + l * mmm1]
-					       - summult[j - mm]
-					       / j * sum[j - mm + l * mmm1])
-				    	    - j * (sumb[k - mm + l * mmm1]
-						   - sumb[j - mm + l * mmm1]
-						   - (summult[k - mm] - summult[j - mm])
-						   / (k - j)
-						   * (sum[k - mm + l * mmm1]
-						      - sum[j - mm + l * mmm1])))
-					/ fmax2(q[j] * q[k - j], *delta);
+				    term = ((k - j) * (sumb[j - mm + l * mmm1] - summult[j - mm] / j * sum[j - mm + l * mmm1])
+				    	    - j * (sumb[k - mm + l * mmm1] - sumb[j - mm + l * mmm1] - (summult[k - mm] - summult[j - mm]) / (k - j)
+						   * (sum[k - mm + l * mmm1] - sum[j - mm + l * mmm1]))) / fmax2(q[j] * q[k - j], *delta);
 				    proc1 = fmax2(proc1, fabs(term));
 				    proc2 += term * term;
 				}
@@ -397,10 +391,10 @@ void seqCpDistMultSeq2(double *X, int *m, int *n, int *d, int *B, int *w,
 /////////////////////////////////////////////////////////////////////////
 /* Multiplier replicates non sequential version */
 /////////////////////////////////////////////////////////////////////////
-void seqCpDistMultNonSeq(double *X, int *m, int *n, int *d, int *B,
-			 int *w, int *bw, double *mac0, double *mmc0,
-			 double *mmk0, double *mc0, double *mk0,
-			 double *gamma, double *delta, double *initseq)
+void seqCpDistMultNonSeq(double *X, int *m, int *n, int *d, int *B, int *w,
+			 int *bw, double *mac0, double *mmc0, double *mmk0,
+			 double *mc0, double *mk0, double *gamma,
+			 double *delta, double *initseq, int *scale)
 {
     int i, j, k, l, b;
     int *I = Calloc((*m) * (*m), int); /* indicators m x m */

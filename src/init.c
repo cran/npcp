@@ -31,26 +31,38 @@
 
 #include "npcp.h"
 
+
+// ./seqmeantest.c ///////////////////////////////////////////////////////////////////
+
+static R_NativePrimitiveArgType seqCpMeanStat_t[] = {
+    REALSXP, INTSXP, INTSXP, REALSXP, REALSXP, REALSXP, REALSXP,
+    REALSXP, INTSXP, INTSXP
+};
+
+static R_NativePrimitiveArgType LRVmean_t[] = {
+    REALSXP, INTSXP, INTSXP, INTSXP, REALSXP
+};
+
 // ./seqcdftest.c ///////////////////////////////////////////////////////////////////
 
 static R_NativePrimitiveArgType seqCpDistStat_t[] = {
     REALSXP, INTSXP, INTSXP, INTSXP, REALSXP, REALSXP, REALSXP, REALSXP,
-    REALSXP, REALSXP,  REALSXP, INTSXP, INTSXP
+    REALSXP, REALSXP,  REALSXP, INTSXP, INTSXP, INTSXP
 };
 
 static R_NativePrimitiveArgType seqCpDistMultSeq1_t[] = {
     REALSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP,
-    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP
+    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, INTSXP
 };
 
 static R_NativePrimitiveArgType seqCpDistMultSeq2_t[] = {
     REALSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP,
-    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP
+    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, INTSXP
 };
 
 static R_NativePrimitiveArgType seqCpDistMultNonSeq_t[] = {
     REALSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP,
-    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP
+    REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP, INTSXP
 };
 
 
@@ -128,13 +140,17 @@ static R_NativePrimitiveArgType pdf_sum_unif_t[] = {
 
 static const R_CMethodDef CEntries[] = {
 
-    {"seqCpDistStat",       (DL_FUNC) &seqCpDistStat,       13, seqCpDistStat_t},
+    {"LRVmean",           (DL_FUNC) &LRVmean,                5, LRVmean_t},
 
-    {"seqCpDistMultSeq1",   (DL_FUNC) &seqCpDistMultSeq1,   15, seqCpDistMultSeq1_t},
+    {"seqCpMeanStat",       (DL_FUNC) &seqCpMeanStat,       10, seqCpMeanStat_t},
 
-    {"seqCpDistMultSeq2",   (DL_FUNC) &seqCpDistMultSeq2,   15, seqCpDistMultSeq2_t},
+    {"seqCpDistStat",       (DL_FUNC) &seqCpDistStat,       14, seqCpDistStat_t},
 
-    {"seqCpDistMultNonSeq", (DL_FUNC) &seqCpDistMultNonSeq, 15, seqCpDistMultNonSeq_t},
+    {"seqCpDistMultSeq1",   (DL_FUNC) &seqCpDistMultSeq1,   16, seqCpDistMultSeq1_t},
+
+    {"seqCpDistMultSeq2",   (DL_FUNC) &seqCpDistMultSeq2,   16, seqCpDistMultSeq2_t},
+
+    {"seqCpDistMultNonSeq", (DL_FUNC) &seqCpDistMultNonSeq, 16, seqCpDistMultNonSeq_t},
 
     {"rBetaCopula",    (DL_FUNC) &rBetaCopula,     5, rBetaCopula_t},
 

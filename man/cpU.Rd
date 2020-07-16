@@ -120,7 +120,9 @@ cpTau(x, method = c("seq", "nonseq", "asym.var"),
   the empirical copula, \code{\link{cpAutocop}()} for a related test based on
   the empirical autocopula, \code{\link{cpRho}()} for a related test based on
   Spearman's rho, \code{\link{bOpt}()} for the function used to
-  estimate \code{b} from \code{x} if \code{b = NULL}.
+  estimate \code{b} from \code{x} if \code{b = NULL} and
+  \code{\link{seqCpMean}} for related sequential tests that can be used
+  for online monitoring.
 }
 \examples{
 ## The standard CUSUM test based on the sample mean

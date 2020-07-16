@@ -10,11 +10,12 @@
   average approach'; see Section 5 of the third reference. The function
   function \code{bOpt()} is called in the functions
   \code{\link{cpMean}()}, \code{\link{cpVar}()}, \code{\link{cpGini}()},
-  \code{\link{cpAutocov}()}, \code{\link{cpCov}()} and
-  \code{\link{cpTau}()} when \code{b} is set to \code{NULL}.  The
-  function function \code{bOptEmpProc()} is called in the functions
-  \code{\link{cpDist}()}, \code{\link{cpCopula}()},
-  \code{\link{cpAutocop}()} and \code{\link{stDistAutocop}()} when
+  \code{\link{cpAutocov}()}, \code{\link{cpCov}()},
+  \code{\link{cpTau}()} and \code{\link{detCpMean}()} when \code{b} is
+  set to \code{NULL}. The function function \code{bOptEmpProc()} is
+  called in the functions \code{\link{cpDist}()},
+  \code{\link{cpCopula}()}, \code{\link{cpAutocop}()},
+  \code{\link{stDistAutocop}()} and \code{\link{simCpDist}()} when
   \code{b} is set to \code{NULL}.
 }
 \usage{
@@ -77,9 +78,10 @@ bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
 \seealso{
   \code{\link{cpDist}()}, \code{\link{cpCopula}()},
   \code{\link{cpAutocop}()}, \code{\link{stDistAutocop}()},
-  \code{\link{cpMean}()}, \code{\link{cpVar}()},
-  \code{\link{cpGini}()}, \code{\link{cpAutocov}()},
-  \code{\link{cpCov}()} and \code{\link{cpTau}()}.
+  \code{\link{cpMean}()}, \code{\link{cpVar}()}, \code{\link{cpGini}()},
+  \code{\link{cpAutocov}()}, \code{\link{cpCov}()},
+  \code{\link{cpTau}()}, \code{\link{seqCpMean}} and
+  \code{\link{seqCpDist}}.
 }
 %\examples{}
 

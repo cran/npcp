@@ -474,7 +474,7 @@ cpMean <- function(x, method = c("nonseq", "seq", "asym.var"),
               PACKAGE = "npcp")
 
     u <- out$u
-    names(u) <- paste0("u",2:(n-2))
+    names(u) <- paste0("u",seq.int(2, n-2))
     stat <- max(u)
     replicates <- NULL
 

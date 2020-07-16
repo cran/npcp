@@ -4,20 +4,20 @@
 \alias{threshCpDist}
 \alias{detCpDist}
 \alias{monCpDist}
-\title{Sequential Test for Change-Point Detection in Possibly
+\title{Closed-end Sequential Test for Change-Point Detection in Possibly
   Multivariate Time Series Sensitive to Changes in the Contemporary
   Distribution Function}
 \description{
-  Nonparametric sequential test for change-point detection based on the
-  (multivariate) empirical distribution function. The observations can
-  be continuous univariate or multivariate, and serially independent or
-  dependent (strongly mixing). To carry out the test, four steps are
-  required. The first step consists of simulating under the null many
-  trajectories of the detector function. The second step consists of
-  estimating a piecewise constant threshold function from these
-  trajectories. The third step consists of computing the detector
-  function from the data to be monitored. The fourth and last step
-  consists of comparing the detector function with the estimated
+  Closed-end nonparametric sequential test for change-point detection
+  based on the (multivariate) empirical distribution function. The
+  observations can be continuous univariate or multivariate, and
+  serially independent or dependent (strongly mixing). To carry out the
+  test, four steps are required. The first step consists of simulating
+  under the null many trajectories of the detector function. The second
+  step consists of estimating a piecewise constant threshold function
+  from these trajectories. The third step consists of computing the
+  detector function from the data to be monitored. The fourth and last
+  step consists of comparing the detector function with the estimated
   threshold function. Each of these steps corresponds to one of the
   functions in the usage section below. The current implementation is
   preliminary and not optimized for real-time monitoring (but could
@@ -150,7 +150,7 @@ monCpDist(det, thresh, statistic = c("mac", "mmc", "mmk", "mk", "mc"),
   This is a test for continuous (multivariate) time series.
 }
 \seealso{
-  see \code{\link{cpDist}()} for the corresponding a priori (offline) test.
+  see \code{\link{cpDist}()} for the corresponding a posteriori (offline) test.
 }
 \examples{
 \dontrun{
@@ -165,7 +165,7 @@ x.learn <- matrix(rnorm(m))
 ## New observations with a large change in mean
 ## to simulate monitoring for the period m+1, ..., n
 k <- 125 ## the true change-point
-x <- matrix(c(rnorm(k-m), rnorm(n-k, mean = 2))) 
+x <- matrix(c(rnorm(k-m), rnorm(n-k, mean = 2)))
 
 ## Step 1: Simulation of B trajectories of the detector functions under the null
 B <- 1e4
@@ -186,7 +186,7 @@ tf.sim <- threshCpDist(traj.sim, p = p) # p can be taken large
 tf.mult <- threshCpDist(traj.mult, p = p) # p should not be taken too
                                           # large unless both m and B
                                           # are very large
-                                                 
+
 ## Step 3: Compute the detectors for the monitoring period m+1, ... , n
 det <- detCpDist(x.learn = x.learn, x = x)
 
@@ -217,3 +217,4 @@ monCpDist(det, tf.mult)
 \keyword{htest}
 \keyword{nonparametric}
 \keyword{ts}
+\keyword{multivariate}

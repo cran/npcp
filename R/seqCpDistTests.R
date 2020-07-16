@@ -64,8 +64,11 @@ rBetaCopulaRanks <- function(r, n) {
 #################################################################################
 
 simCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
-                      B = 1000, method = c("sim", "mult"), b = NULL,
-                      weights = c("parzen", "bartlett"),
+                      B = 1000,
+                      ## method = c("sim", "beta", "mult.seq1", "mult.seq2",
+                      ## "mult.nonseq"),
+                      method = c("sim", "mult"),
+                      b = NULL, weights = c("parzen", "bartlett"),
                       g = 5, L.method = c("max","median","mean","min")) {
 
     ## Checks
@@ -124,17 +127,18 @@ simCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
                        as.double(delta),
                        wmc = integer(nm),
                        wmk = integer(nm),
+                       as.integer(1),
                        PACKAGE = "npcp")
             c(stat$mac, stat$mmc, stat$mmk, stat$mc, stat$mk)
         }
 
         ## Replicates
-        rep <- t(replicate(B, do1()))
-        mac0 <- rep[,1:nm]
-        mmc0 <- rep[,(nm+1):(2*nm)]
-        mmk0 <- rep[,(2*nm+1):(3*nm)]
-        mc0 <- rep[,(3*nm+1):(4*nm)]
-        mk0 <- rep[,(4*nm+1):(5*nm)]
+        rep  <- t(replicate(B, do1()))
+        mac0 <- rep[,seq.int(1,nm)]
+        mmc0 <- rep[,seq.int(nm+1,2*nm)]
+        mmk0 <- rep[,seq.int(2*nm+1,3*nm)]
+        mc0  <- rep[,seq.int(3*nm+1,4*nm)]
+        mk0  <- rep[,seq.int(4*nm+1,5*nm)]
         pmax <- nm
     }
 
@@ -162,17 +166,18 @@ simCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
                        as.double(delta),
                        wmc = integer(nm),
                        wmk = integer(nm),
+                       as.integer(1),
                        PACKAGE = "npcp")
             c(stat$mac, stat$mmc, stat$mmk, stat$mc, stat$mk)
         }
 
         ## Replicates
-        rep <- t(replicate(B, do1()))
-        mac0 <- rep[,1:nm]
-        mmc0 <- rep[,(nm+1):(2*nm)]
-        mmk0 <- rep[,(2*nm+1):(3*nm)]
-        mc0 <- rep[,(3*nm+1):(4*nm)]
-        mk0 <- rep[,(4*nm+1):(5*nm)]
+        rep  <- t(replicate(B, do1()))
+        mac0 <- rep[,seq.int(1,nm)]
+        mmc0 <- rep[,seq.int(nm+1,2*nm)]
+        mmk0 <- rep[,seq.int(2*nm+1,3*nm)]
+        mc0  <- rep[,seq.int(3*nm+1,4*nm)]
+        mk0  <- rep[,seq.int(4*nm+1,5*nm)]
         pmax <- nm
     }
 
@@ -211,6 +216,7 @@ simCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
                   as.double(gamma),
                   as.double(delta),
                   as.double(init.seq),
+                  as.integer(1),
                   PACKAGE = "npcp")
 
         ## Replicates
@@ -223,90 +229,144 @@ simCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
 
     }
 
+    ## Time grid and scale information
+    time.grid <- if (method %in% c("sim", "beta")) seq.int(m+1, n) / m
+                 else seq.int(mm + 1, m) / mm
+    smac <- 4 * (1 - gamma) # scale power for mac
+    smmc <- 3 - 4 * gamma # scale power for mmc
+    smmk <- 1.5 - 2 * gamma # scale power for mmk
+    smc <-  2 # scale power for mc
+    smk <-  1 # scale power for mk
+
     structure(class = "sims.cpDist",
               list(mac = mac0, mmc = mmc0, mmk = mmk0, mc = mc0, mk = mk0,
                    d = d, m = m, n = n, gamma = gamma, delta = delta,
-                   B = B, method = method, pmax = pmax))
+                   B = B, method = method, pmax = pmax,
+                   time.grid = time.grid, smac = smac, smmc = smmc,
+                   smmk = smmk, smc = smc, smk = smk))
 }
 
 #################################################################################
 ## Threshold functions
 #################################################################################
 
-threshCpDist <- function(sims, p = 1, alpha = 0.05, type = 7) {
+threshCpDist <- function(sims,
+                         ##scale = TRUE,
+                         ##method = c("cond", "center.max", "scale.max"),
+                         ##p = NULL, alpha = 0.05, type = 7) {
+                         p = 1, alpha = 0.05, type = 7) {
+
+    scale <- FALSE
 
     ## Checks on 'sims'
     if (!inherits(sims, "sims.cpDist"))
         stop("'sims' should be obtained by 'simCpDist()'")
 
-    mac0 <- sims$mac
-    mmc0 <- sims$mmc
-    mmk0 <- sims$mmk
-    mc0 <- sims$mc
-    mk0 <- sims$mk
-    d <- sims$d
-    m <- sims$m
-    n <- sims$n
-    nm <- n - m
-    B <- sims$B
-    method <- sims$method
-    pmax <- sims$pmax
+    method <- "cond" #match.arg(method)
 
-    stopifnot(p >= 1L)
-    if (p > pmax) stop("The maximum possible value for 'p' is ", pmax)
+    ## Parameters
+    nm <- sims$n - sims$m
+    pmax <- sims$pmax
 
     stopifnot(alpha > 0 && alpha <= 0.5)
 
-    ## Threshold functions
+    ## Scale trajectories ?
+    mac0 <- if (scale) sims$mac %*% diag(sims$time.grid^-sims$smac) else sims$mac
+    mmc0 <- if (scale) sims$mmc %*% diag(sims$time.grid^-sims$smmc) else sims$mmc
+    mmk0 <- if (scale) sims$mmk %*% diag(sims$time.grid^-sims$smmk) else sims$mmk
+    mc0 <-  if (scale) sims$mc  %*% diag(sims$time.grid^-sims$smc)  else sims$mc
+    mk0 <-  if (scale) sims$mk  %*% diag(sims$time.grid^-sims$smk)  else sims$mk
 
-    ## Blocks for computing block maxima
-    bs <- pmax %/% p # ideal size of blocks; blocks of size bs+1 may exist
-    s <- rep(bs, p) # sizes of blocks initialised at bs
-    r <- pmax - p * bs # remaining number of lines
-    if (r > 0) s[seq_len(r)] <- bs + 1 # size of first r blocks incremented if r > 0
-    bl <- c(0, cumsum(s)) # 0 + ending line of each block
-
-    ## Blocks for computing thresholds
-    if (method %in% c("sim", "beta"))
-        st <- s # sizes of blocks for computing thresholds
-    else  { # multiplier replicates
-        bs <- nm %/% p # ideal size of blocks; blocks of size bs+1 may exist
-        st <- rep(bs, p) # sizes of blocks initialised at bs
-        r <- nm - p * bs # remaining number of lines
-        if (r > 0) st[seq_len(r)] <- bs + 1 # size of first r blocks incr. if r > 0
-    }
-
-    ## Quantile order
-    q.prob <- (1 - alpha)^(1/p)
 
     ## Threshold functions
-    computeThreshFunc <- function(rep) {
+    if (method == "cond") {
 
-        ## Compute block maxima
-        rep.max <- matrix(0,B,0)
-        for (i in 1:p)
-            rep.max <- cbind(rep.max,
-                             apply(rep[,(bl[i] + 1):bl[i+1],drop=FALSE], 1, max))
+        if (is.null(p))
+            stop("The value of 'p' needs to be specified when 'method = \"cond\"'")
 
-        ## Compute thresholds
-        threshold <- numeric(p)
-        threshold[1] <- quantile(rep.max[,1], probs = q.prob, type = type)
-        if (p > 1)
-            for (i in 2:p) {
-                rep.max <- rep.max[rep.max[,i-1] <= threshold[i-1],]
-                threshold[i] <- quantile(rep.max[,i], probs = q.prob, type = type)
+        stopifnot(p >= 1L)
+        if (p > pmax) stop("The maximum possible value for 'p' is ", pmax)
+
+        ## Blocks for computing block maxima
+        bs <- pmax %/% p # ideal size of blocks; blocks of size bs+1 may exist
+        s <- rep(bs, p) # sizes of blocks initialised at bs
+        r <- pmax - p * bs # remaining number of lines
+        if (r > 0) s[seq_len(r)] <- bs + 1 # size of first r blocks incremented if r > 0
+        bl <- c(0, cumsum(s)) # 0 + ending line of each block
+
+        ## Blocks for computing thresholds
+        if (sims$method %in% c("sim", "beta"))
+            st <- s # sizes of blocks for computing thresholds
+        else  { # multiplier replicates
+            bs <- nm %/% p # ideal size of blocks; blocks of size bs+1 may exist
+            st <- rep(bs, p) # sizes of blocks initialised at bs
+            r <- nm - p * bs # remaining number of lines
+            if (r > 0) st[seq_len(r)] <- bs + 1 # size of first r blocks incr. if r > 0
+        }
+
+        ## Quantile order
+        q.prob <- (1 - alpha)^(1/p)
+
+        ## Threshold functions
+        computeThreshFunc <- function(rep) {
+
+            ## Compute block maxima
+            rep.max <- matrix(0, sims$B, 0)
+            for (i in seq.int(p))
+                rep.max <- cbind(rep.max,
+                                 apply(rep[,seq.int(bl[i]+1,bl[i+1]),drop=FALSE], 1, max))
+
+            ## Compute thresholds
+            threshold <- numeric(p)
+            threshold[1] <- quantile(rep.max[,1], probs = q.prob, type = type)
+            if (p > 1)
+                for (i in seq.int(2,p)) {
+                    rep.max <- rep.max[rep.max[,i-1] <= threshold[i-1],]
+                    threshold[i] <- quantile(rep.max[,i], probs = q.prob, type = type)
+                }
+
+            ## Compute threshold function so that it is of length nm
+            rep(threshold, times = st) # threshold function
+        }
+    }  else {
+
+        ## Threshold functions
+        computeThreshFunc <- function(rep) {
+
+            ## Scale replications at at each time point
+            means <- colMeans(rep)
+
+            ## Compute threshold
+            if (method == "center.max") {
+
+                q <- quantile(apply(scale(rep, center = means, scale = FALSE), 1, max),
+                              probs = 1 - alpha, type = type)
+                threshold <- q + means
+
+            } else if (method == "scale.max") {
+
+                sds <- apply(rep, 2, sd)
+
+                ## Compute 1 - alpha quantile of maxima of centered replications
+                q <- quantile(apply(scale(rep, center = means, scale = sds), 1, max),
+                              probs = 1 - alpha, type = type)
+                threshold <- sds * q + means
+
+            } else stop("method not implemented")
+
+            if (sims$method %in% c("sim", "beta"))
+                threshold
+            else {
+                ## Blocks for computing thresholds
+                bs <- nm %/% pmax # ideal size of blocks; blocks of size bs+1 may exist
+                st <- rep(bs, pmax) # sizes of blocks initialised at bs
+                r <- nm - pmax * bs # remaining number of lines
+                if (r > 0) st[seq_len(r)] <- bs + 1 # size of first r blocks incr. if r > 0
+                ## Compute threshold function so that it is of length nm
+                rep(threshold, times = st) # threshold function
             }
-
-        ## Compute threshold function so that it is of length nm
-        rep(threshold, times = st) # threshold function
+        }
     }
-
-    ## Compute threshold functions for the 5 detectors
-    thresh.mac <- computeThreshFunc(mac0)
-    thresh.mmc <- computeThreshFunc(mmc0)
-    thresh.mmk <- computeThreshFunc(mmk0)
-    thresh.mc <- computeThreshFunc(mc0)
-    thresh.mk <- computeThreshFunc(mk0)
 
     structure(class = "thresh.cpDist",
               list(mac = computeThreshFunc(mac0),
@@ -314,8 +374,11 @@ threshCpDist <- function(sims, p = 1, alpha = 0.05, type = 7) {
                    mmk = computeThreshFunc(mmk0),
                    mc = computeThreshFunc(mc0),
                    mk = computeThreshFunc(mk0),
-                   d = d, m = m, n = n, gamma = sims$gamma, delta = sims$delta,
-                   B = B, method = method, p = p, alpha = alpha, type = type))
+                   d = sims$d, m = sims$m, n = sims$n, gamma = sims$gamma,
+                   delta = sims$delta, B = sims$B, sim.method = sims$method,
+                   smac = sims$smac, smmc = sims$smmc, smmk = sims$smmk,
+                   smc = sims$smc, smk = sims$smk, scale = as.logical(scale),
+                   p = p, alpha = alpha, type = type))
 }
 
 #################################################################################
@@ -358,6 +421,7 @@ detCpDist <- function(x.learn, x, gamma = 0.25, delta = 1e-4) {
               as.double(delta),
               wmc = integer(nm),
               wmk = integer(nm),
+              as.integer(1),
               PACKAGE = "npcp")
 
     structure(class = "det.cpDist",
@@ -401,6 +465,18 @@ monCpDist <- function(det, thresh,
     if (statistic != "mac" && thresh$method == "mult" && thresh$gamma > 0.25)
         warning("the test might be too conservative with these settings; consider decreasing gamma")
 
+    ## Scale detector values if threshold function scaled
+    if (thresh$scale == TRUE)
+    {
+        time.grid <- seq.int(thresh$m+1, thresh$n) / thresh$m
+        ds <- switch(statistic,
+                     "mac" = ds / time.grid^thresh$smac,
+                     "mmc" = ds / time.grid^thresh$smmc,
+                     "mmk" = ds / time.grid^thresh$smmk,
+                     "mc"  = ds / time.grid^thresh$smc,
+                     "mk"  = ds / time.grid^thresh$smk)
+    }
+
     ## Alarm ?
     conds <- (ds <= ts[seq_len(l)])
     alarm <- !all(conds)
@@ -409,15 +485,14 @@ monCpDist <- function(det, thresh,
           else if (statistic == "mmk") det$wmk else NA
 
     if (plot) {
-        mon.period <- (thresh$m+1):thresh$n # monitoring period
+        mon.period <- seq.int(thresh$m+1, thresh$n) # monitoring period
         plot(mon.period, ts, type = "l", lty = 1,
              xlab = "Monitoring period", ylab = "",
              ylim = c(0, 1.1 * max(ts, ds)))
-        points(mon.period[1:l], ds, type = "b", lty = 3)
+        points(mon.period[seq.int(l)], ds, type = "b", lty = 3)
         legend("topleft", c("threshhold function", "detector function"), lty = c(1, 3))
     }
     list(alarm = alarm, time.alarm = if (alarm) ta + thresh$m else NA,
          times.max = tm, time.change = if (alarm) tm[ta] else NA)
 }
-
 

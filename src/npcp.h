@@ -24,26 +24,34 @@
 
 #include <R.h>
 
+
+// ./seqmeantest.c ///////////////////////////////////////////////////////////////////
+
+void seqCpMeanStat(double *X, int *m, int *n, double *r, double *s,
+		   double *t, double *e, double *cs, int *wr, int *we);
+
+void LRVmean(double *x, int *m,  int *w, int *bw, double *avar);
+
 // ./seqcdftest.c ///////////////////////////////////////////////////////////////////
 
 void seqCpDistStat(double *Y, int *m, int *n, int *d, double *mac,
 		   double *mmc, double *mmk, double *mc, double *mk,
-		   double *gamma, double *delta, int *wmc, int *wmk);
+		   double *gamma, double *delta, int *wmc, int *wmk, int *scale);
 
 void seqCpDistMultSeq1(double *X, int *m, int *n, int *d, int *B, int *w,
 		       int *bw, double *mac0, double *mmc0, double *mmk0,
-		       double *mc0, double *mk0, double *gamma, 
-		       double *delta, double *initseq);
+		       double *mc0, double *mk0, double *gamma,
+		       double *delta, double *initseq, int *scale);
 
 void seqCpDistMultSeq2(double *X, int *m, int *n, int *d, int *B, int *w,
 		       int *bw, double *mac0, double *mmc0, double *mmk0,
 		       double *mc0, double *mk0, double *gamma,
-		       double *delta, double *initseq);
+		       double *delta, double *initseq, int *scale);
 
 void seqCpDistMultNonSeq(double *X, int *m, int *n, int *d, int *B,
 			 int *w, int *bw, double *mac0, double *mmc0,
 			 double *mmk0, double *mc0, double *mk0,
-			 double *gamma, double *delta, double *initseq);
+			 double *gamma, double *delta, double *initseq, int *scale);
 
 void rBetaCopula(int *r, int *m, int *d, int *n, double *x);
 
