@@ -76,12 +76,12 @@ cpRho(x, method = c("mult", "asym.var"),
   I. Kojadinovic, J-F. Quessy and T. Rohmer (2016),
   Testing the constancy of Spearman's rho in multivariate time series,
   \emph{Annals of the Institute of Statistical Mathematics} \bold{68:5},
-  pages 929-954, \url{http://arxiv.org/abs/1407.1624}.
+  pages 929-954, \url{https://arxiv.org/abs/1407.1624}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
   mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
-  \url{http://arxiv.org/abs/1306.3930}.
+  \url{https://arxiv.org/abs/1306.3930}.
 }
 \note{
   These tests were derived under the assumption of continuous margins.

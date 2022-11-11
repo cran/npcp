@@ -11,11 +11,11 @@
   function \code{bOpt()} is called in the functions
   \code{\link{cpMean}()}, \code{\link{cpVar}()}, \code{\link{cpGini}()},
   \code{\link{cpAutocov}()}, \code{\link{cpCov}()},
-  \code{\link{cpTau}()} and \code{\link{detCpMean}()} when \code{b} is
+  \code{\link{cpTau}()} and \code{\link{detOpenEndCpMean}()} when \code{b} is
   set to \code{NULL}. The function function \code{bOptEmpProc()} is
   called in the functions \code{\link{cpDist}()},
   \code{\link{cpCopula}()}, \code{\link{cpAutocop}()},
-  \code{\link{stDistAutocop}()} and \code{\link{simCpDist}()} when
+  \code{\link{stDistAutocop}()} and \code{\link{simClosedEndCpDist}()} when
   \code{b} is set to \code{NULL}.
 }
 \usage{
@@ -66,12 +66,12 @@ bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
   mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
-  \url{http://arxiv.org/abs/1306.3930}.
+  \url{https://arxiv.org/abs/1306.3930}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), Dependent multiplier
   bootstraps for non-degenerate U-statistics under mixing conditions
   with applications, \emph{Journal of Statistical Planning and
-    Inference} \bold{170} pages 83-105, \url{http://arxiv.org/abs/1412.5875}.
+    Inference} \bold{170} pages 83-105, \url{https://arxiv.org/abs/1412.5875}.
 
 }
 %\note{}
@@ -80,8 +80,8 @@ bOptEmpProc(x, m=5, weights = c("parzen", "bartlett"),
   \code{\link{cpAutocop}()}, \code{\link{stDistAutocop}()},
   \code{\link{cpMean}()}, \code{\link{cpVar}()}, \code{\link{cpGini}()},
   \code{\link{cpAutocov}()}, \code{\link{cpCov}()},
-  \code{\link{cpTau}()}, \code{\link{seqCpMean}} and
-  \code{\link{seqCpDist}}.
+  \code{\link{cpTau}()}, \code{\link{seqOpenEndCpMean}} and
+  \code{\link{seqClosedEndCpDist}}.
 }
 %\examples{}
 

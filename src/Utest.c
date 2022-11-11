@@ -44,7 +44,7 @@ void cpTestU(double *h, int *n, double *influ, double *stat, int *M,
     double *multipliers = Calloc((*n) * (*M), double);
     double *u1 = Calloc(*n - 3, double);
     double *u2 = Calloc(*n - 3, double);
-    double s, un, ukm, unkm, sqrtn = sqrt(*n);
+    double s, un = 0.0, ukm, unkm, sqrtn = sqrt(*n);
 
     /* generate (dependent) multipliers */
     if (*method == 1 || *method == 2)

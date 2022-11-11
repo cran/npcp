@@ -17,7 +17,7 @@
   found in third reference.
 }
 \usage{
-cpBlockMax(x, method = c("pwm", "gpwm"), r=10)
+cpBlockMax(x, method = c("pwm", "gpwm"), r = 10)
 }
 \arguments{
   \item{x}{a numeric vector representing independent block maxima whose
@@ -71,7 +71,7 @@ cpBlockMax(x, method = c("pwm", "gpwm"), r=10)
   I. Kojadinovic and P. Naveau (2017), Nonparametric tests for
   change-point detection in the distribution of block maxima based on
   probability weighted moments, \emph{Extremes} \bold{20:2}, pages 417-450,
-  \url{http://arxiv.org/abs/1507.06121}.
+  \url{https://arxiv.org/abs/1507.06121}.
 }
 \note{
   The tests were derived under the assumption of block maxima with
@@ -113,5 +113,6 @@ cp
 which(cp$stats.loc == max(cp$stats.loc))}
 }
 \keyword{htest}
+\keyword{univariate}
 \keyword{nonparametric}
 \keyword{ts}

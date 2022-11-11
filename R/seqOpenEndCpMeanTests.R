@@ -28,7 +28,7 @@
 ## Compute detectors
 #################################################################################
 
-detCpMean <- function(x.learn, x, sigma = NULL, b = NULL,
+detOpenEndCpMean <- function(x.learn, x, sigma = NULL, b = NULL,
                       weights = c("parzen", "bartlett")) {
     ## Constants
     epsilon <- 1e-10
@@ -141,12 +141,12 @@ detCpMean <- function(x.learn, x, sigma = NULL, b = NULL,
 ## Monitor
 #################################################################################
 
-monCpMean <- function(det, statistic = c("t", "s", "r", "e", "cs"), eta = 0.001,
+monOpenEndCpMean <- function(det, statistic = c("t", "s", "r", "e", "cs"), eta = 0.001,
                       gamma = 0.45, alpha = 0.05, sigma = NULL, plot = TRUE) {
 
     ## Checks on 'det'
     if (!inherits(det, "det.cpMean"))
-        stop("'det' should be obtained by 'detCpMean()'")
+        stop("'det' should be obtained by 'detOpenEndCpMean()'")
 
     statistic <- match.arg(statistic)
     stopifnot(is.double(gamma) && gamma >= 0)

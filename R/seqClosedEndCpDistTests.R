@@ -23,7 +23,7 @@
 ## Sequential change-point tests based on the empirical dfs
 #################################################################################
 
-rBetaCopula <- function(x, n) {
+rBetaCopula <- function(n, x) {
 
     ## Checks
     if(!is.matrix(x)) {
@@ -44,18 +44,25 @@ rBetaCopula <- function(x, n) {
               PACKAGE = "npcp")$x, n, d)
 }
 
-rBetaCopulaRanks <- function(r, n) {
+rBetaCopulaRanks <- function(n, r) {
+
+    ## Checks
+    ## if(!is.matrix(r)) {
+    ##     warning("coercing 'r' to a matrix.")
+    ##     stopifnot(is.matrix(r <- as.matrix(r)))
+    ## }
+    ## stopifnot(n >= 1L)
 
     m <- nrow(r)
     d <- ncol(r)
 
-    .C("rBetaCopula",
-       as.integer(r),
-       as.integer(m),
-       as.integer(d),
-       as.integer(n),
-       x = double(n * d),
-       PACKAGE = "npcp")$x
+    matrix(.C("rBetaCopula",
+              as.integer(r),
+              as.integer(m),
+              as.integer(d),
+              as.integer(n),
+              x = double(n * d),
+              PACKAGE = "npcp")$x, n, d)
 }
 
 
@@ -63,7 +70,7 @@ rBetaCopulaRanks <- function(r, n) {
 ## Simulation / bootstrap
 #################################################################################
 
-simCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
+simClosedEndCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
                       B = 1000,
                       ## method = c("sim", "beta", "mult.seq1", "mult.seq2",
                       ## "mult.nonseq"),
@@ -153,7 +160,7 @@ simCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
 
         do1 <- function() {
             stat <- .C("seqCpDistStat",
-                       as.double(rBetaCopulaRanks(r, n)),
+                       as.double(rBetaCopulaRanks(n, r)),
                        as.integer(m),
                        as.integer(n),
                        as.integer(d),
@@ -250,17 +257,17 @@ simCpDist <- function(x.learn = NULL, m = NULL, n, gamma = 0.25, delta = 1e-4,
 ## Threshold functions
 #################################################################################
 
-threshCpDist <- function(sims,
-                         ##scale = TRUE,
-                         ##method = c("cond", "center.max", "scale.max"),
-                         ##p = NULL, alpha = 0.05, type = 7) {
+threshClosedEndCpDist <- function(sims,
+                         ## scale = TRUE,
+                         ## method = c("cond", "center.max", "scale.max"),
+                         ## p = NULL, alpha = 0.05, type = 7) {
                          p = 1, alpha = 0.05, type = 7) {
 
     scale <- FALSE
 
     ## Checks on 'sims'
     if (!inherits(sims, "sims.cpDist"))
-        stop("'sims' should be obtained by 'simCpDist()'")
+        stop("'sims' should be obtained by 'simClosedEndCpDist()'")
 
     method <- "cond" #match.arg(method)
 
@@ -385,7 +392,7 @@ threshCpDist <- function(sims,
 ## Detector functions
 #################################################################################
 
-detCpDist <- function(x.learn, x, gamma = 0.25, delta = 1e-4) {
+detClosedEndCpDist <- function(x.learn, x, gamma = 0.25, delta = 1e-4) {
 
     ## Checks
     if(!is.matrix(x.learn)) {
@@ -435,16 +442,16 @@ detCpDist <- function(x.learn, x, gamma = 0.25, delta = 1e-4) {
 ## Monitoring step
 #################################################################################
 
-monCpDist <- function(det, thresh,
+monClosedEndCpDist <- function(det, thresh,
                       statistic = c("mac", "mmc", "mmk", "mk", "mc"),
                       plot = TRUE) {
 
     ## Checks on 'det' and 'thresh'
     if (!inherits(det, "det.cpDist"))
-        stop("'det' should be obtained by 'detCpDist()'")
+        stop("'det' should be obtained by 'detClosedEndCpDist()'")
 
     if (!inherits(thresh, "thresh.cpDist"))
-        stop("'thresh' should be obtained by 'threshCpDist()'")
+        stop("'thresh' should be obtained by 'threshClosedEndCpDist()'")
 
     if (det$d != thresh$d || det$m != thresh$m)
         stop("'det' and 'thresh' have not been computed from the same learning sample")
@@ -462,7 +469,7 @@ monCpDist <- function(det, thresh,
     if ((l <- length(ds)) > length(ts))
         stop("the number of detector values is greater than the number of threshold values")
     ## Check for too large gamma value
-    if (statistic != "mac" && thresh$method == "mult" && thresh$gamma > 0.25)
+    if (statistic != "mac" && thresh$sim.method == "mult" && thresh$gamma > 0.25)  ## CHANGED
         warning("the test might be too conservative with these settings; consider decreasing gamma")
 
     ## Scale detector values if threshold function scaled

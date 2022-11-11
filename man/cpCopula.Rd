@@ -77,12 +77,12 @@ cpCopula(x, method = c("seq", "nonseq"), b = NULL,
   A. B\enc{ü}{u}cher, I. Kojadinovic, T. Rohmer and J. Segers (2014),
   Detecting changes in cross-sectional dependence in multivariate
   time series, \emph{Journal of Multivariate Analysis} \bold{132}, pages 111-128,
-  \url{http://arxiv.org/abs/1206.2557}.
+  \url{https://arxiv.org/abs/1206.2557}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
   mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
-  \url{http://arxiv.org/abs/1306.3930}.
+  \url{https://arxiv.org/abs/1306.3930}.
 }
 \note{
   These tests were derived under the assumption of continuous margins.

@@ -54,12 +54,12 @@ stDistAutocop(x, lag = 1, b = NULL, pairwise = FALSE,
   Combining cumulative sum change-point detection tests for assessing
   the stationarity of univariate time series, \emph{Journal of Time
   Series Analysis} \bold{40}, pages 124-150,
-  \url{http://arxiv.org/abs/1709.02673}.
+  \url{https://arxiv.org/abs/1709.02673}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
   mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
-  \url{http://arxiv.org/abs/1306.3930}.
+  \url{https://arxiv.org/abs/1306.3930}.
 }
 \note{
   This is a test for continuous univariate time series.
@@ -88,5 +88,6 @@ stDistAutocop(x, lag = 2, pairwise = TRUE)
 }
 
 \keyword{htest}
+\keyword{univariate}
 \keyword{nonparametric}
 \keyword{ts}

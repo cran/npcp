@@ -31,6 +31,11 @@
 
 #include "npcp.h"
 
+// ./seqopenendcdftest.c ///////////////////////////////////////////////////////////////////
+
+static R_NativePrimitiveArgType seqOpenEndCpDistStat_t[] = {
+    REALSXP, INTSXP, INTSXP, INTSXP, REALSXP, REALSXP, INTSXP
+};
 
 // ./seqmeantest.c ///////////////////////////////////////////////////////////////////
 
@@ -138,9 +143,12 @@ static R_NativePrimitiveArgType pdf_sum_unif_t[] = {
     INTSXP, REALSXP, INTSXP, REALSXP
 };
 
+
 static const R_CMethodDef CEntries[] = {
 
-    {"LRVmean",           (DL_FUNC) &LRVmean,                5, LRVmean_t},
+    {"seqOpenEndCpDistStat",  (DL_FUNC) &seqOpenEndCpDistStat,     7, seqOpenEndCpDistStat_t},
+
+    {"LRVmean",                (DL_FUNC) &LRVmean,                5, LRVmean_t},
 
     {"seqCpMeanStat",       (DL_FUNC) &seqCpMeanStat,       10, seqCpMeanStat_t},
 

@@ -1,6 +1,6 @@
 useDynLib(npcp)
 importFrom("stats", "acf", "ccf", "median", "rnorm", "qnorm", "quantile", "runif", "sd")
-importFrom("graphics", "legend", "plot", "points")
+importFrom("graphics", "legend", "plot", "points", "abline", "par")
 importFrom("utils", "data")
 ##importFrom("numDeriv", hessian)
 
@@ -20,7 +20,7 @@ export(cpAutocov)
 export(bOpt)
 export(bOptEmpProc)
 
-## Block maxima
+## block maxima
 export(cpBlockMax)
 
 ## serial tests
@@ -34,10 +34,14 @@ export(stDistAutocop)
 # export(cpSerialRho)
 
 ## sequential tests
-export(detCpDist)
-export(simCpDist)
-export(threshCpDist)
-export(monCpDist)
+export(detClosedEndCpDist)
+export(simClosedEndCpDist)
+export(threshClosedEndCpDist)
+export(monClosedEndCpDist)
 
-export(detCpMean)
-export(monCpMean)
+export(detOpenEndCpMean)
+export(monOpenEndCpMean)
+
+export(selectPoints)
+export(detOpenEndCpDist)
+export(monOpenEndCpDist)

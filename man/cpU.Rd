@@ -106,12 +106,12 @@ cpTau(x, method = c("seq", "nonseq", "asym.var"),
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), Dependent multiplier
   bootstraps for non-degenerate U-statistics under mixing conditions
   with applications, \emph{Journal of Statistical Planning and
-    Inference} \bold{170}, pages 83-105, \url{http://arxiv.org/abs/1412.5875}.
+    Inference} \bold{170}, pages 83-105, \url{https://arxiv.org/abs/1412.5875}.
 
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
   mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
-  \url{http://arxiv.org/abs/1306.3930}.
+  \url{https://arxiv.org/abs/1306.3930}.
 }
 %\note{}
 \seealso{
@@ -121,7 +121,7 @@ cpTau(x, method = c("seq", "nonseq", "asym.var"),
   the empirical autocopula, \code{\link{cpRho}()} for a related test based on
   Spearman's rho, \code{\link{bOpt}()} for the function used to
   estimate \code{b} from \code{x} if \code{b = NULL} and
-  \code{\link{seqCpMean}} for related sequential tests that can be used
+  \code{\link{seqOpenEndCpMean}} for related sequential tests that can be used
   for online monitoring.
 }
 \examples{
@@ -169,6 +169,7 @@ cp
 which(cp$u == cp$statistic)}
 }
 \keyword{htest}
+\keyword{univariate}
 \keyword{multivariate}
 \keyword{nonparametric}
 \keyword{ts}

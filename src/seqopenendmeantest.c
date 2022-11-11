@@ -1,6 +1,6 @@
 /*#################################################################################
   ##
-  ##   R package npcp by Ivan Kojadinovic Copyright (C) 2019
+  ##   R package npcp by Ivan Kojadinovic Copyright (C) 2020
   ##
   ##   This file is part of the R package npcp.
   ##
@@ -36,7 +36,6 @@ void seqCpMeanStat(double *X, int *m, int *n, double *r, double *s,
     double diff, term, rk, sk, tk, ek;
     int nm = (*n) - (*m);
     double *sum = Calloc(nm + 1, double);
-    double *q = Calloc(*n + 1, double);
     double sqrtm = sqrt(*m), msqrtm = (*m) * sqrtm,
 	m2 = (*m) * (*m), m2sqrtm = msqrtm * (*m);
 
@@ -50,7 +49,7 @@ void seqCpMeanStat(double *X, int *m, int *n, double *r, double *s,
     /* detectors */
     for (k = *m + 1; k <= *n; k++)
 	{
-	    /* Rm,q, Sm,q, Tm,q, Em */
+	    /* Rm, Sm, Tm, Em */
 	    rk = 0.0;
 	    sk = 0.0;
 	    tk = 0.0;
@@ -84,7 +83,6 @@ void seqCpMeanStat(double *X, int *m, int *n, double *r, double *s,
 	}
 
     Free(sum);
-    Free(q);
 }
 
 

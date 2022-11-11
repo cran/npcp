@@ -98,13 +98,13 @@ cpDist(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
   A. B\enc{ü}{u}cher and I. Kojadinovic (2016), A dependent multiplier
   bootstrap for the sequential empirical copula process under strong
   mixing, \emph{Bernoulli} \bold{22:2}, pages 927-968,
-  \url{http://arxiv.org/abs/1306.3930}.
+  \url{https://arxiv.org/abs/1306.3930}.
 
    A. B\enc{ü}{u}cher, J.-D. Fermanian and I. Kojadinovic (2019),
   Combining cumulative sum change-point detection tests for assessing
   the stationarity of univariate time series, \emph{Journal of Time
   Series Analysis} \bold{40}, pages 124-150,
-  \url{http://arxiv.org/abs/1709.02673}.
+  \url{https://arxiv.org/abs/1709.02673}.
 }
 \note{
   Note that when the observations are continuous univariate and serially
@@ -118,7 +118,7 @@ cpDist(x, statistic = c("cvmmax", "cvmmean", "ksmax", "ksmean"),
   Spearman's rho, \code{\link{cpTau}()} for a related test based on
   Kendall's tau, \code{\link{bOptEmpProc}()} for the function used to
   estimate \code{b} from \code{x} if \code{b = NULL},
-  \code{\link{seqCpDist}} for the corresponding sequential test.
+  \code{\link{seqClosedEndCpDist}} for the corresponding sequential test.
 }
 \examples{
 ## A univariate example
