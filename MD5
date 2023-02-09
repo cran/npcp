@@ -1,4 +1,4 @@
-6ef282326c13543fcb991eedb7a5d8e0 *DESCRIPTION
+f1e29891f41b38189946627709fedb9a *DESCRIPTION
 782777ce4dd11654694f51c3680be405 *LICENCE
 e15c73dbf1055e3f2b1aac8adaf74af7 *NAMESPACE
 7ad13c9c66c243d91155152e68dd9747 *R/cpTests.R
@@ -8,7 +8,7 @@ e05cba7319b50bbbe869d67db4c8adb4 *R/lnOpt.R
 67bf0d28d4d65de75768ed79992e62b0 *R/seqOpenEndCpMeanTests.R
 c271161636b38d99be57b64ccf32f707 *R/serialTests.R
 2cc18b682dff9c3de0a47247f3d87127 *R/sysdata.rda
-0c6ad5b3446721162c89589e8077ab1c *build/partial.rdb
+ea124a494ad7922985532ad3b308e4d5 *build/partial.rdb
 2cc18b682dff9c3de0a47247f3d87127 *data/quantiles.rda
 5dac31ef4a668119b391109987923a64 *man/bOptEmpProc.Rd
 b03bb9265f0f6fdc14e50adff67d92c2 *man/cpAutocop.Rd
@@ -34,7 +34,7 @@ b77f7935058331cd15a1ef8a9b99116f *src/rhotest.c
 207b2f469a28988497e476c5e5603db2 *src/seqclosedendcdftest.c
 6cb66dbd3962393ddc5ed74af97ed0a1 *src/seqopenendcdftest.c
 39ecab9c23b225a593559b3aa4d71118 *src/seqopenendmeantest.c
-0ddb686a07503546dd9c2ed9d422075c *src/set_utils.c
+d1f1cf871fc88e34b6a52b1a3aa0a70a *src/set_utils.c
 9937a6e8e7c67a44c718197ff0d2456c *src/set_utils.h
 4193bdf760b97942560c384f42ceb9b6 *src/utilities.c
 4668eb0b231abe71d6610a8a63daa5bb *src/utilities.h
