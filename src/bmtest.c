@@ -569,21 +569,21 @@ void cpTestBM(double *X, int *n, int *r, double *stat, double *gamman,
 	      int *meth, int *landwehr, int *noties, int* center,
 	      double *param, double *avar)
 {
-    double *cdfn = Calloc(*n, double); // estimated cdfs from entire sample
-    double *cdf = Calloc(*n, double); // estimated cdfs from subsamples
-    double *x = Calloc(*n, double); // copy of data for sorting
-    int *index = Calloc(*n, int); // for sorting
+    double *cdfn = R_Calloc(*n, double); // estimated cdfs from entire sample
+    double *cdf = R_Calloc(*n, double); // estimated cdfs from subsamples
+    double *x = R_Calloc(*n, double); // copy of data for sorting
+    int *index = R_Calloc(*n, int); // for sorting
     int p = 3, survival = 0; // for omega, domega functions
-    double *Y = Calloc((*n) * p, double); // influence functions
-    double *beta = Calloc(p, double); // pwm estimates
-    double *betak = Calloc(p, double); // pwm estimates
-    double *betank = Calloc(p, double); // pwm estimates
-    double *grad = Calloc(p * p, double); // for gradient of g
-    double *cova = Calloc(p * p, double); // covariance matrix of influence terms
-    double *a = Calloc(p, double); // powers of pwms
-    double *b = Calloc(p, double); // powers of pwms
-    double *paramk = Calloc(p, double); // parameter estimates from subsamples
-    double *paramnk = Calloc(p, double); // parameter estimates from subsamples
+    double *Y = R_Calloc((*n) * p, double); // influence functions
+    double *beta = R_Calloc(p, double); // pwm estimates
+    double *betak = R_Calloc(p, double); // pwm estimates
+    double *betank = R_Calloc(p, double); // pwm estimates
+    double *grad = R_Calloc(p * p, double); // for gradient of g
+    double *cova = R_Calloc(p * p, double); // covariance matrix of influence terms
+    double *a = R_Calloc(p, double); // powers of pwms
+    double *b = R_Calloc(p, double); // powers of pwms
+    double *paramk = R_Calloc(p, double); // parameter estimates from subsamples
+    double *paramnk = R_Calloc(p, double); // parameter estimates from subsamples
     int i, j, k, l, m, failed, failedk, failednk;
     double meanj, meanl, s, sqrtn = sqrt(*n);
 
@@ -728,20 +728,20 @@ void cpTestBM(double *X, int *n, int *r, double *stat, double *gamman,
 	}
 
 
-    Free(cdf);
-    Free(cdfn);
-    Free(x);
-    Free(index);
-    Free(Y);
-    Free(beta);
-    Free(betak);
-    Free(betank);
-    Free(grad);
-    Free(cova);
-    Free(a);
-    Free(b);
-    Free(paramk);
-    Free(paramnk);
+    R_Free(cdf);
+    R_Free(cdfn);
+    R_Free(x);
+    R_Free(index);
+    R_Free(Y);
+    R_Free(beta);
+    R_Free(betak);
+    R_Free(betank);
+    R_Free(grad);
+    R_Free(cova);
+    R_Free(a);
+    R_Free(b);
+    R_Free(paramk);
+    R_Free(paramnk);
 }
 
 /***********************************************************************
@@ -753,16 +753,16 @@ void cpTestBM(double *X, int *n, int *r, double *stat, double *gamman,
 void fitGEV(double *X, int *n, double *gamma, double *delta, int *meth,
 	    int *landwehr, int *noties, double *param, double *avar)
 {
-    double *cdfn = Calloc(*n, double); // estimated cdfs from entire sample
-    double *x = Calloc(*n, double); // copy of data for sorting
-    int *index = Calloc(*n, int); // for sorting
+    double *cdfn = R_Calloc(*n, double); // estimated cdfs from entire sample
+    double *x = R_Calloc(*n, double); // copy of data for sorting
+    int *index = R_Calloc(*n, int); // for sorting
     int p = 3, survival = 0; // for omega, domega functions
-    double *Y = Calloc((*n) * p, double); // influence functions
-    double *beta = Calloc(p, double); // pwm estimates
-    double *grad = Calloc(p * p, double); // for gradient of g
-    double *cova = Calloc(p * p, double); // covariance matrix of influence terms
-    double *a = Calloc(p, double); // powers of pwms
-    double *b = Calloc(p, double); // powers of pwms
+    double *Y = R_Calloc((*n) * p, double); // influence functions
+    double *beta = R_Calloc(p, double); // pwm estimates
+    double *grad = R_Calloc(p * p, double); // for gradient of g
+    double *cova = R_Calloc(p * p, double); // covariance matrix of influence terms
+    double *a = R_Calloc(p, double); // powers of pwms
+    double *b = R_Calloc(p, double); // powers of pwms
     int i, j, l, m, failed;
     double meanj, meanl;
 
@@ -860,14 +860,14 @@ void fitGEV(double *X, int *n, double *gamma, double *delta, int *meth,
 	}
 
 
-    Free(cdfn);
-    Free(x);
-    Free(index);
-    Free(Y);
-    Free(beta);
-    Free(grad);
-    Free(cova);
-    Free(a);
-    Free(b);
+    R_Free(cdfn);
+    R_Free(x);
+    R_Free(index);
+    R_Free(Y);
+    R_Free(beta);
+    R_Free(grad);
+    R_Free(cova);
+    R_Free(a);
+    R_Free(b);
 }
 

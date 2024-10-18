@@ -36,10 +36,10 @@ void cpTestMean(double *x, int *n, double *stat, int *M,
 		double *initseq) {
 
     int i, j, k, m, ln;
-    double *multipliers = Calloc((*n) * (*M), double);
-    double *sum = Calloc(*n - 1, double);
-    double *mean1 = Calloc(*n - 1, double);
-    double *mean2 = Calloc(*n - 1, double);
+    double *multipliers = R_Calloc((*n) * (*M), double);
+    double *sum = R_Calloc(*n - 1, double);
+    double *mean1 = R_Calloc(*n - 1, double);
+    double *mean2 = R_Calloc(*n - 1, double);
     double s, meann, prockm, procnkm, sqrtn = sqrt(*n);
 
     /* generate (dependent) multipliers */
@@ -113,8 +113,8 @@ void cpTestMean(double *x, int *n, double *stat, int *M,
 	    //*avar /= *n;
 	}
 
-    Free(multipliers);
-    Free(sum);
-    Free(mean1);
-    Free(mean2);
+    R_Free(multipliers);
+    R_Free(sum);
+    R_Free(mean1);
+    R_Free(mean2);
 }

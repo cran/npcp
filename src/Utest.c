@@ -41,9 +41,9 @@ void cpTestU(double *h, int *n, double *influ, double *stat, int *M,
 	     double *initseq)
 {
     int i, j, k, m, ln;
-    double *multipliers = Calloc((*n) * (*M), double);
-    double *u1 = Calloc(*n - 3, double);
-    double *u2 = Calloc(*n - 3, double);
+    double *multipliers = R_Calloc((*n) * (*M), double);
+    double *u1 = R_Calloc(*n - 3, double);
+    double *u2 = R_Calloc(*n - 3, double);
     double s, un = 0.0, ukm, unkm, sqrtn = sqrt(*n);
 
     /* generate (dependent) multipliers */
@@ -137,7 +137,7 @@ void cpTestU(double *h, int *n, double *influ, double *stat, int *M,
 	    //*avar /= *n;
 	}
 
-    Free(multipliers);
-    Free(u1);
-    Free(u2);
+    R_Free(multipliers);
+    R_Free(u1);
+    R_Free(u2);
 }

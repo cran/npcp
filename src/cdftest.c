@@ -41,13 +41,13 @@ void cpTestF(double *X, int *n, int *d, double *cvm, double *ks,
 
     int i, j, k, q;
     double procq, t, sqrtn = sqrt(*n), multk, multnk;
-    int *ind = Calloc((*n) * (*n), int);
-    double *ecdf = Calloc(*n, double);
-    double *indk = Calloc(*n, double);
-    double *indnk = Calloc(*n, double);
-    double *sumk = Calloc(*n, double);
-    double *sumnk = Calloc(*n, double);
-    double *multipliers = Calloc((*n) * (*M), double);
+    int *ind = R_Calloc((*n) * (*n), int);
+    double *ecdf = R_Calloc(*n, double);
+    double *indk = R_Calloc(*n, double);
+    double *indnk = R_Calloc(*n, double);
+    double *sumk = R_Calloc(*n, double);
+    double *sumnk = R_Calloc(*n, double);
+    double *multipliers = R_Calloc((*n) * (*M), double);
 
     /* generate (dependent) multipliers */
     gendepmult(*n, *M, *bw, *w, initseq, multipliers);
@@ -138,11 +138,11 @@ void cpTestF(double *X, int *n, int *d, double *cvm, double *ks,
 		}
 	}
 
-    Free(ind);
-    Free(multipliers);
-    Free(ecdf);
-    Free(indk);
-    Free(indnk);
-    Free(sumk);
-    Free(sumnk);
+    R_Free(ind);
+    R_Free(multipliers);
+    R_Free(ecdf);
+    R_Free(indk);
+    R_Free(indnk);
+    R_Free(sumk);
+    R_Free(sumnk);
 }

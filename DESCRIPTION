@@ -2,13 +2,13 @@ Package: npcp
 Type: Package
 Title: Some Nonparametric CUSUM Tests for Change-Point Detection in
         Possibly Multivariate Observations
-Version: 0.2-5
-Date: 2023-02-09
+Version: 0.2-6
+Date: 2024-10-18
 Authors@R: c(person("Ivan", "Kojadinovic", role = c("aut","cre"),
 	   email = "ivan.kojadinovic@univ-pau.fr",
 	   comment = c(ORCID = "0000-0002-2903-1543")),
 	   person("Alex", "Verhoijsen", role = "ctb",
-	   comment = c(ORCID = "0000-0001-9634-4796"))
+	   comment = c(ORCID = "0000-0003-0649-2280"))
            )
 Maintainer: Ivan Kojadinovic <ivan.kojadinovic@univ-pau.fr>
 Depends: R (>= 3.5.0)
@@ -36,8 +36,8 @@ License: GPL (>= 3) | file LICENCE
 LazyLoad: yes
 Encoding: UTF-8
 NeedsCompilation: yes
-Packaged: 2023-02-09 16:00:22 UTC; ikojadin
+Packaged: 2024-10-18 07:09:06 UTC; ikojadin
 Author: Ivan Kojadinovic [aut, cre] (<https://orcid.org/0000-0002-2903-1543>),
-  Alex Verhoijsen [ctb] (<https://orcid.org/0000-0001-9634-4796>)
+  Alex Verhoijsen [ctb] (<https://orcid.org/0000-0003-0649-2280>)
 Repository: CRAN
-Date/Publication: 2023-02-09 16:20:02 UTC
+Date/Publication: 2024-10-18 08:00:02 UTC

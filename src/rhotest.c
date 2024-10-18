@@ -199,11 +199,11 @@ void influ_nonseq(int n, int d, double *V, int a, double fa,
 void influRho(double *X, int *n, int *d, double *fbin, double *influ)
 {
     int i;
-    int *index = Calloc(*n, int);
-    double *V = Calloc((*n) * (*d), double); // pseudo-obs not depending on k
-    double *x = Calloc((*n) * (*d), double);
-    double *influa = Calloc(*n, double);
-    double *proda = Calloc(*n, double);
+    int *index = R_Calloc(*n, int);
+    double *V = R_Calloc((*n) * (*d), double); // pseudo-obs not depending on k
+    double *x = R_Calloc((*n) * (*d), double);
+    double *influa = R_Calloc(*n, double);
+    double *proda = R_Calloc(*n, double);
     
     /* compute pseudo-obs V not depending on k */
     for (i = 0; i < (*n) * (*d); i++)
@@ -218,11 +218,11 @@ void influRho(double *X, int *n, int *d, double *fbin, double *influ)
 	    influ_nonseq(*n, *d, V, i, fbin[i],
 			 proda, influa, influ);
 
-    Free(index);
-    Free(V);
-    Free(x);
-    Free(influa);
-    Free(proda);
+    R_Free(index);
+    R_Free(V);
+    R_Free(x);
+    R_Free(influa);
+    R_Free(proda);
 }
 
 
@@ -239,13 +239,13 @@ void cpTestRho(double *X, int *n, int *d, double *rho, double *fbin,
 	       int *method, double *rho0, double *avar, double *initseq)
 {
     int i, j, k, m, ln;
-    double *U = Calloc((*n) * (*d), double); // pseudo-obs depending on k 
-    int *index = Calloc(*n, int);
-    double *V = Calloc((*n) * (*d), double); // pseudo-obs not depending on k
-    double *x = Calloc((*n) * (*d), double);
-    double *influa = Calloc(*n, double);
-    double *proda = Calloc(*n, double);
-    double *multipliers = Calloc((*n) * (*M), double);
+    double *U = R_Calloc((*n) * (*d), double); // pseudo-obs depending on k 
+    int *index = R_Calloc(*n, int);
+    double *V = R_Calloc((*n) * (*d), double); // pseudo-obs not depending on k
+    double *x = R_Calloc((*n) * (*d), double);
+    double *influa = R_Calloc(*n, double);
+    double *proda = R_Calloc(*n, double);
+    double *multipliers = R_Calloc((*n) * (*M), double);
     double s, sumk, meank, sumnk, meannk, sqrtn = sqrt(*n);
 
     /* generate (dependent) multipliers */
@@ -379,11 +379,11 @@ void cpTestRho(double *X, int *n, int *d, double *rho, double *fbin,
 
 
 
-    Free(U);
-    Free(index);
-    Free(V);
-    Free(x);
-    Free(influa);
-    Free(proda);
-    Free(multipliers);
+    R_Free(U);
+    R_Free(index);
+    R_Free(V);
+    R_Free(x);
+    R_Free(influa);
+    R_Free(proda);
+    R_Free(multipliers);
 }

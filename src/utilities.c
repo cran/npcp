@@ -66,8 +66,8 @@ double div_diff_xn_1_y_plus(int n, double *a, double y) {
   if (r==0 || s==0)
       return 0.0;
 
-  b = Calloc(r, double);
-  c = Calloc(s, double);
+  b = R_Calloc(r, double);
+  c = R_Calloc(s, double);
 
   j=0;
   k=0;
@@ -77,7 +77,7 @@ double div_diff_xn_1_y_plus(int n, double *a, double y) {
       else
 	  c[k++]=a[i]-y;
 
-  dd = Calloc(s + 1, double);
+  dd = R_Calloc(s + 1, double);
 
   /* Initialize dd */
   dd[0] = 0.0;
@@ -93,7 +93,7 @@ double div_diff_xn_1_y_plus(int n, double *a, double y) {
 
   out = dd[s];
 
-  Free(b); Free(c); Free(dd);
+  R_Free(b); R_Free(c); R_Free(dd);
 
   return out;
 }
@@ -106,7 +106,7 @@ double div_diff_xn_1_y_plus(int n, double *a, double y) {
 
 void pdf_sum_unif(int *n, double *y, int *ny, double *pdfy)
 {
-    double *a = Calloc(*n+1,double);
+    double *a = R_Calloc(*n+1,double);
 
     for(int i=0; i<=*n; i++)
 	a[i] = *n - i;
@@ -114,7 +114,7 @@ void pdf_sum_unif(int *n, double *y, int *ny, double *pdfy)
     for (int i=0; i <*ny; i++)
 	pdfy[i] = div_diff_xn_1_y_plus(*n,a,y[i]) * (double)(*n);
 
-    Free(a);
+    R_Free(a);
 }
 
 
@@ -142,7 +142,7 @@ double parzen(double x)
 
 double convrect(double x, int n)
 {
-    double *a = Calloc(n+1,double), res;
+    double *a = R_Calloc(n+1,double), res;
 
     for(int i=0; i<=n; i++)
 	a[i] = n - i;
@@ -150,7 +150,7 @@ double convrect(double x, int n)
     res = div_diff_xn_1_y_plus(n, a, x + n / 2.0)
 	/ div_diff_xn_1_y_plus(n, a, n / 2.0);
 
-    Free(a);
+    R_Free(a);
 
     return res;
 }
@@ -164,7 +164,7 @@ double convrect(double x, int n)
 void gendepmult(int n, int M, int bw, int w, double *initseq, double *multipliers)
 {
     int i, j, m;
-    double *weights = Calloc(2 * bw - 1, double);
+    double *weights = R_Calloc(2 * bw - 1, double);
     double norm;
 
     /* Bartlett weights */
@@ -196,5 +196,5 @@ void gendepmult(int n, int M, int bw, int w, double *initseq, double *multiplier
 			* initseq[i + j + m * (n + 2*(bw-1))];
 	    }
 
-    Free(weights);
+    R_Free(weights);
 }

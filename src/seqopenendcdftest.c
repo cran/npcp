@@ -35,9 +35,9 @@ void seqOpenEndCpDistStat(double *Y, int *m, int *n, int *p,
     int i, j, k, l, q;
     double norm, rk;
     int nm = (*n) - (*m), nm1 = nm + 1;
-    double *sum = Calloc(nm1 * (*p), double);
-    double *diff = Calloc(*p, double);
-    double *tmp = Calloc(*p, double);
+    double *sum = R_Calloc(nm1 * (*p), double);
+    double *diff = R_Calloc(*p, double);
+    double *tmp = R_Calloc(*p, double);
     double msqrtm = (*m) * sqrt(*m);
 
     /* Precompute cumulative sums */
@@ -82,9 +82,9 @@ void seqOpenEndCpDistStat(double *Y, int *m, int *n, int *p,
 	    r[k - *m - 1] = rk / msqrtm;
 	}
 
-    Free(sum);
-    Free(diff);
-    Free(tmp);
+    R_Free(sum);
+    R_Free(diff);
+    R_Free(tmp);
 }
 
 

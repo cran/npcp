@@ -45,8 +45,8 @@ void seqCpDistStat(double *Y, int *m, int *n, int *d, double *mac,
     int i, j, k, l;
     double d1k, d2k, d3k, proc1, proc2, term;
     int ind, nm = (*n) - (*m);
-    double *sum = Calloc((nm + 1) * (*n), double);
-    double *q = Calloc(*n + 1, double);
+    double *sum = R_Calloc((nm + 1) * (*n), double);
+    double *q = R_Calloc(*n + 1, double);
     double f = R_pow((double)(*m), 1.5);
 
     /* compute \sum_{i=1}^j 1(X_i <= X_l) for i = m, ..., n*/
@@ -128,8 +128,8 @@ void seqCpDistStat(double *Y, int *m, int *n, int *d, double *mac,
 	    mc[k - *m - 1] =  proc2 / (f * f * k);
 	}
 
-    Free(sum);
-    Free(q);
+    R_Free(sum);
+    R_Free(q);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -142,15 +142,15 @@ void seqCpDistMultSeq1(double *X, int *m, int *n, int *d, int *B, int *w,
 		       double *delta, double *initseq, int *scale)
 {
     int i, j, k, l, b;
-    int *I = Calloc((*m) * (*m), int); /* indicators m x m */
+    int *I = R_Calloc((*m) * (*m), int); /* indicators m x m */
     int mm = (int)((*m) * (*m) / (double)(*n)), mmm1 = *m - mm + 1;
-    double *sumb = Calloc(mmm1 * (*m), double);
-    double *F = Calloc(mmm1 * (*m), double); /* sequential edfs */
-    double *multipliers = Calloc((*m) * (*B), double);
-    double *summult = Calloc(mmm1, double);
+    double *sumb = R_Calloc(mmm1 * (*m), double);
+    double *F = R_Calloc(mmm1 * (*m), double); /* sequential edfs */
+    double *multipliers = R_Calloc((*m) * (*B), double);
+    double *summult = R_Calloc(mmm1, double);
     double d1k, d2k, d3k, proc1, proc2, term;
     double f = sqrt(mm) * mm;
-    double *q = Calloc(*m + 1, double);
+    double *q = R_Calloc(*m + 1, double);
 
     /* generate (dependent) multipliers */
     gendepmult(*m, *B, *bw, *w, initseq, multipliers);
@@ -255,12 +255,12 @@ void seqCpDistMultSeq1(double *X, int *m, int *n, int *d, int *B, int *w,
     	    	}
     	}
 
-    Free(I);
-    Free(sumb);
-    Free(F);
-    Free(summult);
-    Free(multipliers);
-    Free(q);
+    R_Free(I);
+    R_Free(sumb);
+    R_Free(F);
+    R_Free(summult);
+    R_Free(multipliers);
+    R_Free(q);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -272,15 +272,15 @@ void seqCpDistMultSeq2(double *X, int *m, int *n, int *d, int *B, int *w,
 		       double *delta, double *initseq, int *scale)
 {
     int i, j, k, l, b;
-    int *I = Calloc((*m) * (*m), int); /* indicators m x m */
+    int *I = R_Calloc((*m) * (*m), int); /* indicators m x m */
     int mm = (int)((*m) * (*m) / (double)(*n)), mmm1 = *m - mm + 1;
-    double *sumb = Calloc(mmm1 * (*m), double);
-    double *sum = Calloc(mmm1 * (*m), double); /* sequential edfs */
-    double *multipliers = Calloc((*m) * (*B), double);
-    double *summult = Calloc(mmm1, double);
+    double *sumb = R_Calloc(mmm1 * (*m), double);
+    double *sum = R_Calloc(mmm1 * (*m), double); /* sequential edfs */
+    double *multipliers = R_Calloc((*m) * (*B), double);
+    double *summult = R_Calloc(mmm1, double);
     double d1k, d2k, d3k, proc1, proc2, term;
     double f = sqrt(mm) * mm;
-    double *q = Calloc(*m + 1, double);
+    double *q = R_Calloc(*m + 1, double);
 
     /* generate (dependent) multipliers */
     gendepmult(*m, *B, *bw, *w, initseq, multipliers);
@@ -380,12 +380,12 @@ void seqCpDistMultSeq2(double *X, int *m, int *n, int *d, int *B, int *w,
     	    	}
     	}
 
-    Free(I);
-    Free(sumb);
-    Free(sum);
-    Free(summult);
-    Free(multipliers);
-    Free(q);
+    R_Free(I);
+    R_Free(sumb);
+    R_Free(sum);
+    R_Free(summult);
+    R_Free(multipliers);
+    R_Free(q);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -397,14 +397,14 @@ void seqCpDistMultNonSeq(double *X, int *m, int *n, int *d, int *B, int *w,
 			 double *delta, double *initseq, int *scale)
 {
     int i, j, k, l, b;
-    int *I = Calloc((*m) * (*m), int); /* indicators m x m */
+    int *I = R_Calloc((*m) * (*m), int); /* indicators m x m */
     int mm = (int)((*m) * (*m) / (double)(*n)), mmm1 = *m - mm + 1;
-    double *sumb = Calloc(mmm1 * (*m), double);
-    double *F = Calloc(*m, double); /* ecdfs */
-    double *multipliers = Calloc((*m) * (*B), double);
+    double *sumb = R_Calloc(mmm1 * (*m), double);
+    double *F = R_Calloc(*m, double); /* ecdfs */
+    double *multipliers = R_Calloc((*m) * (*B), double);
     double d1k, d2k, d3k, proc1, proc2, term;
     double f = sqrt(mm) * mm;
-    double *q = Calloc(*m + 1, double);
+    double *q = R_Calloc(*m + 1, double);
 
     /* generate (dependent) multipliers */
     gendepmult(*m, *B, *bw, *w, initseq, multipliers);
@@ -488,11 +488,11 @@ void seqCpDistMultNonSeq(double *X, int *m, int *n, int *d, int *B, int *w,
     	    	}
     	}
 
-    Free(I);
-    Free(sumb);
-    Free(F);
-    Free(multipliers);
-    Free(q);
+    R_Free(I);
+    R_Free(sumb);
+    R_Free(F);
+    R_Free(multipliers);
+    R_Free(q);
 }
 
 

@@ -35,7 +35,7 @@ void seqCpMeanStat(double *X, int *m, int *n, double *r, double *s,
     int i, j, k;
     double diff, term, rk, sk, tk, ek;
     int nm = (*n) - (*m);
-    double *sum = Calloc(nm + 1, double);
+    double *sum = R_Calloc(nm + 1, double);
     double sqrtm = sqrt(*m), msqrtm = (*m) * sqrtm,
 	m2 = (*m) * (*m), m2sqrtm = msqrtm * (*m);
 
@@ -82,7 +82,7 @@ void seqCpMeanStat(double *X, int *m, int *n, double *r, double *s,
 		* fabs(sum[0] / (*m) - (sum[k - *m] - sum[0]) / (k - *m));
 	}
 
-    Free(sum);
+    R_Free(sum);
 }
 
 

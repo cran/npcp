@@ -147,18 +147,18 @@ void cpTestC(double *X, int *n, int *d, double *cvm, int *M,
 	     int *we, int *bw, int *seq, double *cvm0, double *initseq)
 {
     int i, j, k, l, m;
-    int *index = Calloc(*n, int);
-    double *U = Calloc((*n) * (*d), double); // pseudo-obs depending on k
-    double *V = Calloc((*n) * (*d), double); // pseudo-obs not depending on k
-    double *x = Calloc((*n) * (*d), double);
-    double *u = Calloc(*d, double);
-    double *v = Calloc(*d, double);
-    double *w = Calloc(*d, double);
-    double *sumk = Calloc(*n, double);
-    double *sumnk = Calloc(*n, double);
-    double *der = Calloc(*d, double);
-    double *influ = Calloc((*n) * (*n), double);
-    double *multipliers = Calloc((*n) * (*M), double);
+    int *index = R_Calloc(*n, int);
+    double *U = R_Calloc((*n) * (*d), double); // pseudo-obs depending on k
+    double *V = R_Calloc((*n) * (*d), double); // pseudo-obs not depending on k
+    double *x = R_Calloc((*n) * (*d), double);
+    double *u = R_Calloc(*d, double);
+    double *v = R_Calloc(*d, double);
+    double *w = R_Calloc(*d, double);
+    double *sumk = R_Calloc(*n, double);
+    double *sumnk = R_Calloc(*n, double);
+    double *der = R_Calloc(*d, double);
+    double *influ = R_Calloc((*n) * (*n), double);
+    double *multipliers = R_Calloc((*n) * (*M), double);
     double s, diff;
 
     /* generate (dependent) multipliers */
@@ -257,18 +257,18 @@ void cpTestC(double *X, int *n, int *d, double *cvm, int *M,
 		    }
 	    }
 
-    Free(index);
-    Free(U);
-    Free(V);
-    Free(x);
-    Free(u);
-    Free(v);
-    Free(w);
-    Free(sumk);
-    Free(sumnk);
-    Free(der);
-    Free(influ);
-    Free(multipliers);
+    R_Free(index);
+    R_Free(U);
+    R_Free(V);
+    R_Free(x);
+    R_Free(u);
+    R_Free(v);
+    R_Free(w);
+    R_Free(sumk);
+    R_Free(sumnk);
+    R_Free(der);
+    R_Free(influ);
+    R_Free(multipliers);
 }
 
 /***********************************************************************
@@ -319,20 +319,20 @@ void cpTestAutocop(double *X, int *n, int *d, int *h, double *cvm, int *M,
 	dh = (*d) * 2; /* only first and last set of d columns */
     else
 	dh = (*d) * (*h); /* all sets */
-    int *index = Calloc(*n, int);
-    double *U = Calloc((*n) * (*d), double); // pseudo-obs depending on k
-    double *Uh = Calloc(nh * dh, double); // lagged pseudo-obs depending on k
-    double *V = Calloc((*n) * (*d), double); // pseudo-obs not depending on k
-    double *Vh = Calloc(nh * dh, double); // lagged pseudo-obs not depending on k
-    double *x = Calloc((*n) * (*d), double);
-    double *u = Calloc(dh, double);
-    double *v = Calloc(dh, double);
-    double *w = Calloc(dh, double);
-    double *sumk = Calloc(nh, double);
-    double *sumnk = Calloc(nh, double);
-    double *der = Calloc(dh, double);
-    double *influ = Calloc(nh * nh, double);
-    double *multipliers = Calloc(nh * (*M), double);
+    int *index = R_Calloc(*n, int);
+    double *U = R_Calloc((*n) * (*d), double); // pseudo-obs depending on k
+    double *Uh = R_Calloc(nh * dh, double); // lagged pseudo-obs depending on k
+    double *V = R_Calloc((*n) * (*d), double); // pseudo-obs not depending on k
+    double *Vh = R_Calloc(nh * dh, double); // lagged pseudo-obs not depending on k
+    double *x = R_Calloc((*n) * (*d), double);
+    double *u = R_Calloc(dh, double);
+    double *v = R_Calloc(dh, double);
+    double *w = R_Calloc(dh, double);
+    double *sumk = R_Calloc(nh, double);
+    double *sumnk = R_Calloc(nh, double);
+    double *der = R_Calloc(dh, double);
+    double *influ = R_Calloc(nh * nh, double);
+    double *multipliers = R_Calloc(nh * (*M), double);
     double s, diff;
 
     /* generate (dependent) multipliers */
@@ -438,18 +438,18 @@ void cpTestAutocop(double *X, int *n, int *d, int *h, double *cvm, int *M,
 		    }
 	    }
 
-    Free(index);
-    Free(U);
-    Free(Uh);
-    Free(V);
-    Free(Vh);
-    Free(x);
-    Free(u);
-    Free(v);
-    Free(w);
-    Free(sumk);
-    Free(sumnk);
-    Free(der);
-    Free(influ);
-    Free(multipliers);
+    R_Free(index);
+    R_Free(U);
+    R_Free(Uh);
+    R_Free(V);
+    R_Free(Vh);
+    R_Free(x);
+    R_Free(u);
+    R_Free(v);
+    R_Free(w);
+    R_Free(sumk);
+    R_Free(sumnk);
+    R_Free(der);
+    R_Free(influ);
+    R_Free(multipliers);
 }
